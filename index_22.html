@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0A0518" />
+<title>Econo $ Mío</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Econo $ Mío" />
+<meta name="mobile-web-app-capable" content="yes" />
+<style>
+  :root{
+    --noche:#0A0518; --capa:#150C2E; --tinta:#EDE8FF; --tenue:#8F82C9;
+    --reja:#2A1B52; --magenta:#FF2E88; --cian:#25E7FF; --violeta:#A24BFF;
+    --neon:#3DFF9E; --rojo:#FF5470; --naranja:#FF8A3D; --amarillo:#FFC93C;
+    --display:Impact,Haettenschweiler,"Franklin Gothic Bold","Arial Black",sans-serif;
+    --body:"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--noche);color:var(--tinta);font-family:var(--body);min-height:100vh;position:relative;-webkit-text-size-adjust:100%}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:4;background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 1px,transparent 1px 3px);opacity:.5}
+  .cielo{
+    position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+    background:linear-gradient(180deg,#050310 0%,#0A0620 44%,#100827 70%,#160B2E 88%,#0A0518 100%);
+    opacity:0;transition:opacity 2s ease;
+  }
+  .cielo.encendido{opacity:1}
+  .cielo span{position:absolute;display:block}
+
+  .estrellas{
+    inset:0;opacity:.5;
+    background-image:
+      radial-gradient(1.4px 1.4px at 12% 9%,  #EDE8FF, transparent),
+      radial-gradient(1px 1px     at 28% 16%, #EDE8FF, transparent),
+      radial-gradient(1.2px 1.2px at 44% 6%,  #EDE8FF, transparent),
+      radial-gradient(1px 1px     at 63% 13%, #EDE8FF, transparent),
+      radial-gradient(1.5px 1.5px at 79% 5%,  #EDE8FF, transparent),
+      radial-gradient(1px 1px     at 91% 18%, #EDE8FF, transparent),
+      radial-gradient(1px 1px     at 20% 26%, #EDE8FF, transparent),
+      radial-gradient(1.2px 1.2px at 71% 24%, #EDE8FF, transparent);
+    background-repeat:no-repeat;
+  }
+
+  /* el color del cielo cuenta cómo venís */
+  .tinte{inset:0;opacity:0;transition:opacity 1.4s ease}
+  .tinte.verde{
+    background:
+      radial-gradient(90% 46% at 50% 58%, rgba(61,255,158,.20), transparent 70%),
+      linear-gradient(180deg, transparent 34%, rgba(61,255,158,.10) 62%, rgba(61,255,158,.20) 80%, transparent 100%);
+  }
+  .tinte.rojo{
+    background:
+      radial-gradient(90% 46% at 50% 58%, rgba(255,84,112,.22), transparent 70%),
+      linear-gradient(180deg, transparent 34%, rgba(255,84,112,.11) 62%, rgba(255,84,112,.22) 80%, transparent 100%);
+  }
+
+  .horizonte{left:0;right:0;bottom:44vh;height:1px;opacity:0;transition:opacity 1.4s ease}
+  .horizonte.v{background:rgba(61,255,158,.55);box-shadow:0 0 16px rgba(61,255,158,.45)}
+  .horizonte.r{background:rgba(255,84,112,.55);box-shadow:0 0 16px rgba(255,84,112,.45)}
+
+  .suelo{
+    left:-70%;right:-70%;bottom:0;height:44vh;opacity:0;
+    transform:perspective(300px) rotateX(78deg);
+    transform-origin:50% 0;
+    animation:correrSuelo 3.4s linear infinite;
+    transition:opacity 1.4s ease;
+  }
+  .suelo.v{
+    background-image:
+      repeating-linear-gradient(0deg,  rgba(61,255,158,.50) 0 2px, transparent 2px 72px),
+      repeating-linear-gradient(90deg, rgba(61,255,158,.38) 0 2px, transparent 2px 72px);
+  }
+  .suelo.r{
+    background-image:
+      repeating-linear-gradient(0deg,  rgba(255,84,112,.50) 0 2px, transparent 2px 72px),
+      repeating-linear-gradient(90deg, rgba(255,84,112,.38) 0 2px, transparent 2px 72px);
+  }
+  @keyframes correrSuelo{ from{background-position:0 0} to{background-position:0 72px} }
+
+  .cielo.pos .verde,.cielo.pos .v{opacity:1}
+  .cielo.neg .rojo,.cielo.neg .r{opacity:1}
+
+  .velo{
+    inset:0;
+    background:linear-gradient(180deg,
+      rgba(10,5,24,.74) 0%,
+      rgba(10,5,24,.62) 40%,
+      rgba(10,5,24,.66) 70%,
+      rgba(10,5,24,.84) 100%);
+  }
+  .hoja{max-width:620px;margin:0 auto;padding:26px 20px 90px;position:relative;z-index:1}
+
+  .rotulo{font-family:var(--display);font-size:16px;letter-spacing:.16em;text-transform:uppercase;color:var(--cian);text-shadow:0 0 12px rgba(37,231,255,.55)}
+  .cabecera{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:12px}
+  .nota{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--tenue)}
+  .etiqueta{font-size:14px;font-weight:600;color:var(--tenue)}
+  .separador{margin:26px 0;height:2px;background:linear-gradient(90deg,var(--magenta),var(--violeta) 45%,var(--cian));opacity:.5}
+
+
+  /* pestañas */
+  .pestanas{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;background:rgba(10,5,24,.96);border-top:2px solid var(--reja);backdrop-filter:blur(6px)}
+  .pestanas button{flex:1;border:0;background:none;color:var(--tenue);font-family:var(--display);font-size:13px;letter-spacing:.1em;text-transform:uppercase;padding:16px 4px 18px;cursor:pointer;transition:all .2s}
+  .pestanas button.viva{color:var(--cian);text-shadow:0 0 12px var(--cian);box-shadow:inset 0 3px 0 var(--cian)}
+  .panel{display:none}
+  .panel.vivo{display:block}
+
+  /* campos */
+  .fila{display:flex;gap:9px;align-items:center}
+  .campo{width:100%;border:0;border-bottom:2px solid var(--reja);background:transparent;padding:10px 2px;font-size:17px;font-weight:700;color:var(--tinta);outline:none;border-radius:0;font-family:var(--body);transition:all .2s}
+  .campo:focus{border-bottom-color:var(--magenta)}
+  .campo::placeholder{color:#4C3E7A}
+  .campo[readonly]{color:var(--tenue)}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  select.campo{cursor:pointer}
+  select.campo option{background:var(--capa);color:var(--tinta)}
+  .x{border:0;background:none;color:#4C3E7A;font-size:21px;cursor:pointer;padding:6px 0;width:20px;line-height:1}
+  .x:hover{color:var(--rojo)}
+  .accion{border:2px solid var(--magenta);background:transparent;font-family:var(--display);font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--magenta);padding:9px 14px;cursor:pointer;transition:all .2s}
+  .accion:hover{background:rgba(255,46,136,.14);box-shadow:0 0 14px rgba(255,46,136,.45)}
+  .accion.cian{border-color:var(--cian);color:var(--cian)}
+  .accion.cian:hover{background:rgba(37,231,255,.14);box-shadow:0 0 14px rgba(37,231,255,.45)}
+  .tenue{border:0;background:none;font-family:var(--body);font-size:13px;font-weight:600;color:var(--tenue);padding:3px 0;cursor:pointer}
+  .tenue:hover{color:var(--tinta)}
+  .sumar{width:100%;border:0;background:none;text-align:left;font-family:var(--display);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--violeta);padding:12px 2px;cursor:pointer}
+  .sumar:hover{color:var(--cian)}
+  *:focus-visible{outline:2px solid var(--cian);outline-offset:3px}
+
+  /* cifras */
+  .cifra{font-family:var(--display);font-size:52px;line-height:1;font-variant-numeric:tabular-nums;text-shadow:0 0 22px rgba(37,231,255,.65),0 0 44px rgba(162,75,255,.4)}
+  .cifra.rojo{color:var(--rojo);text-shadow:0 0 22px rgba(255,84,112,.7)}
+  .media{font-family:var(--display);font-size:28px;font-variant-numeric:tabular-nums}
+
+  /* fichas de persona */
+
+
+  /* leyenda de torta */
+  .leyenda{display:flex;flex-direction:column;gap:9px;flex:1;min-width:150px}
+  .leyenda div{display:flex;align-items:center;gap:8px;font-size:13px}
+  .leyenda i{width:11px;height:11px;display:inline-block;flex:none}
+  .leyenda b{margin-left:auto;font-variant-numeric:tabular-nums;font-family:var(--display);font-size:15px;font-weight:400}
+
+  /* saldo */
+  .saldo{border:2px solid var(--neon);padding:16px;margin-top:6px;box-shadow:0 0 18px rgba(61,255,158,.16),inset 0 0 18px rgba(61,255,158,.06)}
+  .saldo .quienDebe{font-family:var(--display);font-size:22px;color:var(--neon);text-shadow:0 0 12px rgba(61,255,158,.6);line-height:1.25}
+  .saldo.parejo{border-color:var(--reja);box-shadow:none}
+  .saldo.parejo .quienDebe{color:var(--tenue);text-shadow:none}
+
+
+  /* puerta */
+  .puerta{position:fixed;inset:0;z-index:6;background:rgba(10,5,24,.94);display:flex;align-items:center;justify-content:center;padding:24px;overflow:auto}
+  .cerrojo{width:100%;max-width:380px}
+  .cerrojo h2{font-family:var(--display);font-size:19px;letter-spacing:.16em;text-transform:uppercase;color:var(--cian);text-shadow:0 0 12px rgba(37,231,255,.55);margin:26px 0 6px}
+  .cerrojo label{display:block;font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--tenue);margin:16px 0 -4px}
+  .entrar{width:100%;margin-top:24px;border:2px solid var(--cian);background:transparent;font-family:var(--display);font-size:16px;letter-spacing:.14em;text-transform:uppercase;color:var(--cian);padding:12px;cursor:pointer}
+  .entrar:hover{background:rgba(37,231,255,.12)}
+  .error{font-size:13px;font-weight:700;color:var(--rojo);margin:14px 0 0;min-height:18px}
+  .sugerida{font-family:"Courier New",monospace;font-size:16px;color:var(--neon);word-break:break-all;margin:12px 0 0;display:none;padding:10px;border:1px dashed var(--reja)}
+  .pie{font-size:12px;color:var(--tenue);line-height:1.5;margin:0 0 18px}
+  
+  /* ---------- portada ---------- */
+  .portada{
+    position:fixed;inset:0;z-index:20;background:var(--noche);
+    display:flex;align-items:center;justify-content:center;
+    padding:24px;transition:opacity .7s ease, visibility .7s;
+  }
+  .portada.apagada{opacity:0;visibility:hidden;pointer-events:none}
+  .portada .rayas{
+    position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.3) 0 1px,transparent 1px 3px);
+  }
+  .portada .brasa{
+    position:absolute;left:0;right:0;bottom:0;height:42vh;pointer-events:none;
+    background:radial-gradient(120% 80% at 50% 130%, rgba(255,46,136,.26), transparent 68%);
+    opacity:0;animation:asomar 1.6s ease 1.4s both;
+  }
+
+  .marca{
+    display:flex;align-items:center;justify-content:center;
+    width:100%;max-width:420px;position:relative;
+  }
+  .marca span{
+    font-family:var(--body);font-weight:700;letter-spacing:.06em;
+    color:transparent;-webkit-text-stroke:2px #EDE8FF;
+    text-shadow:0 0 14px rgba(237,232,255,.55), 0 0 34px rgba(162,75,255,.35);
+    white-space:nowrap;line-height:1;
+  }
+  .marca .pal{flex:1 1 0;font-size:min(9.5vw,42px)}
+  .marca .izq{text-align:right;padding-right:.14em;
+    opacity:0;animation:entraIzq .8s cubic-bezier(.2,.8,.25,1) 1.45s both}
+  .marca .der{text-align:left;padding-left:.14em;
+    opacity:0;animation:entraDer .8s cubic-bezier(.2,.8,.25,1) 1.45s both}
+  .marca .signo{
+    flex:none;font-size:min(14vw,62px);
+    -webkit-text-stroke:2.6px #FF2E88;
+    text-shadow:0 0 18px rgba(255,46,136,.75), 0 0 46px rgba(255,46,136,.45);
+    animation:naceElSigno 2.35s cubic-bezier(.22,.9,.24,1) both;
+  }
+
+  @keyframes naceElSigno{
+    0%  {opacity:0;transform:scale(.25)}
+    30% {opacity:1;transform:scale(2.9)}
+    52% {opacity:1;transform:scale(2.9)}
+    100%{opacity:1;transform:scale(1)}
+  }
+  @keyframes entraIzq{ from{opacity:0;transform:translateX(-30px)} to{opacity:1;transform:none} }
+  @keyframes entraDer{ from{opacity:0;transform:translateX(30px)}  to{opacity:1;transform:none} }
+  @keyframes asomar{ from{opacity:0} to{opacity:1} }
+  @keyframes subir{ from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
+
+  /* los campos entran escalonados cuando aparece una pantalla */
+  .cerrojo > *{animation:subir .5s ease both}
+  .cerrojo > *:nth-child(1){animation-delay:.02s}
+  .cerrojo > *:nth-child(2){animation-delay:.08s}
+  .cerrojo > *:nth-child(3){animation-delay:.14s}
+  .cerrojo > *:nth-child(4){animation-delay:.20s}
+  .cerrojo > *:nth-child(5){animation-delay:.26s}
+  .cerrojo > *:nth-child(6){animation-delay:.32s}
+  .cerrojo > *:nth-child(7){animation-delay:.38s}
+  .cerrojo > *:nth-child(8){animation-delay:.44s}
+  .cerrojo > *:nth-child(n+9){animation-delay:.50s}
+
+
+
+  .doble{display:flex;align-items:center;gap:18px;margin-top:6px}
+  .doble .lado{flex:1;min-width:0}
+  .doble .lado.der{text-align:right}
+  .doble .cifra{display:block;font-size:min(8.4vw,40px);letter-spacing:.01em}
+  .doble .raya{width:2px;align-self:stretch;min-height:46px;
+    background:linear-gradient(180deg,transparent,var(--reja) 22%,var(--reja) 78%,transparent)}
+  .doble .dolar{color:var(--neon);text-shadow:0 0 22px rgba(61,255,158,.6),0 0 46px rgba(61,255,158,.25)}
+  .doble .dolar.rojo{color:var(--rojo);text-shadow:0 0 22px rgba(255,84,112,.6)}
+  .doble.solo .raya,.doble.solo .lado.der{display:none}
+  .doble.solo .cifra{font-size:min(12vw,52px)}
+  .titulo{
+    font-family:var(--display);font-size:24px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--tinta);text-align:center;margin:2px 0 6px;font-weight:400;
+    text-shadow:0 0 16px rgba(237,232,255,.45);
+  }
+  .doble .rosa{color:var(--magenta);text-shadow:0 0 22px rgba(255,46,136,.6),0 0 46px rgba(255,46,136,.25)}
+  .doble .subcifra{display:block;font-size:11px;font-weight:700;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--tenue);margin-top:6px}
+  .reloj{display:flex;justify-content:center;margin:10px 0 26px}
+  .reloj svg{width:100%;max-width:220px;display:block}
+  .reloj .arco{transition:stroke-dashoffset 1.3s cubic-bezier(.2,.8,.2,1)}
+  .balanza{margin-top:24px;border-top:1px solid var(--reja)}
+  .balanza .linea{display:flex;align-items:baseline;gap:12px;padding:11px 0;border-bottom:1px solid var(--reja);font-size:15px;color:var(--tenue)}
+  .balanza .linea b{margin-left:auto;font-family:var(--display);font-weight:400;font-size:20px;color:var(--tinta);font-variant-numeric:tabular-nums}
+  .balanza .suma{color:var(--tinta);font-weight:700}
+  .balanza .suma b{color:var(--magenta)}
+  .barra{height:16px;background:var(--capa);border:1px solid var(--reja);position:relative;overflow:hidden;margin-top:26px}
+  .barra i{position:absolute;top:0;bottom:0;left:0;width:0;background:linear-gradient(90deg,var(--magenta),var(--violeta) 60%,var(--cian));box-shadow:0 0 16px rgba(162,75,255,.6);transition:width .46s cubic-bezier(.2,.8,.2,1)}
+  .barra.excedido i{background:linear-gradient(90deg,var(--rojo),var(--magenta))}
+  .pies{display:flex;justify-content:space-between;margin-top:10px}
+  .desglose div{display:flex;align-items:center;gap:11px;padding:10px 0;font-size:14px}
+  .desglose .punto{width:10px;height:10px;flex:none}
+  .desglose .nombre{flex:0 0 108px;color:var(--tenue)}
+  .desglose .riel{flex:1;height:7px;background:var(--reja);position:relative}
+  .desglose .riel i{position:absolute;left:0;top:0;bottom:0;display:block}
+  .desglose b{font-family:var(--display);font-weight:400;font-size:16px;font-variant-numeric:tabular-nums;min-width:46px;text-align:right}
+
+  /* rótulos que ya no se muestran */
+  #tituloAuth, #pieAuth{display:none}
+
+  @media (prefers-reduced-motion:reduce){
+    .suelo{animation:none}
+    .marca .signo,.marca .izq,.marca .der,.portada .brasa,.cerrojo > *{
+      animation:none;opacity:1;transform:none}
+  }
+
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  .caja{border:2px solid var(--reja);padding:16px;margin-bottom:14px}
+  .caja h3{font-family:var(--display);font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--cian);margin:0 0 10px}
+  .codigo{font-family:"Courier New",monospace;font-size:30px;letter-spacing:.22em;color:var(--neon);text-shadow:0 0 14px rgba(61,255,158,.7);text-align:center;padding:14px;border:1px dashed var(--neon);margin:10px 0}
+  .estado{position:fixed;top:0;left:0;right:0;z-index:7;text-align:center;font-size:12px;font-weight:700;letter-spacing:.1em;padding:7px;background:var(--rojo);color:var(--noche);display:none}
+  .paso{display:flex;gap:10px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--reja);font-size:14px;line-height:1.45}
+  .paso .marca{font-family:var(--display);font-size:17px;flex:none;width:20px;text-align:center}
+  .paso.ok .marca{color:var(--neon);text-shadow:0 0 8px var(--neon)}
+  .paso.mal .marca{color:var(--rojo);text-shadow:0 0 8px var(--rojo)}
+  .paso.esperando .marca{color:var(--tenue)}
+  .paso .arreglo{display:block;color:var(--tenue);font-size:12.5px;margin-top:5px}
+  .conectado{display:inline-block;width:8px;height:8px;background:var(--neon);box-shadow:0 0 8px var(--neon);margin-right:7px}
+</style>
+</head>
+<body>
+
+
+<div class="portada" id="portada">
+  <div class="brasa"></div>
+  <div class="marca">
+    <span class="pal izq">ECONO</span>
+    <span class="signo">$</span>
+    <span class="pal der">MÍO</span>
+  </div>
+  <div class="rayas"></div>
+</div>
+
+<div class="cielo pos" id="cielo" aria-hidden="true">
+  <span class="estrellas"></span>
+  <span class="tinte verde"></span>
+  <span class="tinte rojo"></span>
+  <span class="horizonte v"></span>
+  <span class="horizonte r"></span>
+  <span class="suelo v"></span>
+  <span class="suelo r"></span>
+  <span class="velo"></span>
+</div>
+
+<div class="estado" id="estadoRed">SIN CONEXIÓN · los cambios no se están guardando</div>
+
+
+<div class="puerta" id="pantallaDiag" style="display:none">
+  <div class="cerrojo">
+    <h2>Probando la conexión</h2>
+    <p class="pie">Cada línea es un paso. Si algo falla, abajo dice qué hacer.</p>
+    <div id="diagLista"></div>
+    <button class="entrar" id="diagVolver" style="margin-top:24px">Volver</button>
+  </div>
+</div>
+
+<!-- ============ 1. CONFIGURACIÓN ============ -->
+<div class="puerta" id="pantallaConfig" style="display:none">
+  <div class="cerrojo">
+    <h2>Conectar con tu base</h2>
+    <p class="pie">Pegá los dos datos del proyecto de Supabase. Se guardan en este dispositivo, no se envían a ningún lado.</p>
+    <label for="cfgUrl">URL DEL PROYECTO</label>
+    <input class="campo" id="cfgUrl" placeholder="https://xxxx.supabase.co" autocapitalize="none" spellcheck="false" />
+    <label for="cfgKey">CLAVE PÚBLICA (ANON)</label>
+    <input class="campo" id="cfgKey" placeholder="eyJhbGci..." autocapitalize="none" spellcheck="false" />
+    <p class="error" id="errorCfg"></p>
+    <button class="entrar" id="guardarCfg">Conectar</button>
+    <button class="tenue" id="diagDesdeCfg" style="margin-top:18px">Probar la conexión</button>
+  </div>
+</div>
+
+<!-- ============ 2. CUENTA ============ -->
+<div class="puerta" id="pantallaAuth" style="display:none">
+  <div class="cerrojo">
+    <svg viewBox="0 0 400 108" role="img" aria-label="Econo $ Mío" style="width:100%;max-width:290px;display:block;margin:0 auto;overflow:visible">
+      <defs>
+        <filter id="pHalo" x="-40%" y="-60%" width="180%" height="220%"><feGaussianBlur stdDeviation="6"/></filter>
+        <filter id="pNucleo" x="-40%" y="-60%" width="180%" height="220%"><feGaussianBlur stdDeviation="1.6"/></filter>
+      </defs>
+      <g font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="40" font-weight="700" letter-spacing="5" text-anchor="middle" fill="none" stroke-linejoin="round">
+        <text x="200" y="66" stroke-width="9" opacity=".45" filter="url(#pHalo)"><tspan stroke="#EDE8FF">ECONO</tspan><tspan dx="13" font-size="58" stroke="#FF2E88">$</tspan><tspan dx="13" stroke="#EDE8FF">MÍO</tspan></text>
+        <text x="200" y="66" stroke-width="5" opacity=".75" filter="url(#pNucleo)"><tspan stroke="#EDE8FF">ECONO</tspan><tspan dx="13" font-size="58" stroke="#FF2E88">$</tspan><tspan dx="13" stroke="#EDE8FF">MÍO</tspan></text>
+        <text x="200" y="66" stroke-width="2.4"><tspan stroke="#EDE8FF">ECONO</tspan><tspan dx="13" font-size="58" stroke="#FF2E88">$</tspan><tspan dx="13" stroke="#EDE8FF">MÍO</tspan></text>
+      </g>
+      <text x="200" y="96" text-anchor="middle" font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="5" fill="#25E7FF">CUENTAS DE LOS DOS</text>
+    </svg>
+    <h2 id="tituloAuth">Entrar</h2>
+    <p class="pie" id="pieAuth">Cada uno con su propia cuenta, en su propio teléfono.</p>
+    <label for="mail">CORREO</label>
+    <input class="campo" id="mail" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" />
+    <label for="pass">CONTRASEÑA</label>
+    <input class="campo" id="pass" type="password" autocomplete="current-password" />
+    <p class="error" id="errorAuth"></p>
+    <button class="entrar" id="botonAuth">Entrar</button>
+    <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
+      <button class="tenue" id="cambiarModo">Todavía no tengo cuenta</button>
+      <button class="tenue" id="diagDesdeAuth">Probar la conexión</button>
+      <button class="tenue" id="olvidoNube" style="margin-left:auto">Cambiar de base</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 3. HOGAR ============ -->
+<div class="puerta" id="pantallaHogar" style="display:none">
+  <div class="cerrojo">
+    <h2>Tu casa</h2>
+    <p class="pie">Uno crea la casa y le pasa el código al otro. Después los dos ven lo mismo.</p>
+
+    <div class="caja">
+      <h3>Empezar de cero</h3>
+      <label for="miNombreA">CÓMO TE LLAMÁS</label>
+      <input class="campo" id="miNombreA" placeholder="Ana" />
+      <button class="accion cian" id="botonCrearHogar" style="width:100%;margin-top:16px;padding:12px">Crear la casa</button>
+    </div>
+
+    <div class="caja">
+      <h3>Sumarme a una casa</h3>
+      <label for="codigoHogar">CÓDIGO</label>
+      <input class="campo" id="codigoHogar" placeholder="A7K2M9" autocapitalize="characters" spellcheck="false" style="letter-spacing:.2em" />
+      <label for="miNombreB">CÓMO TE LLAMÁS</label>
+      <input class="campo" id="miNombreB" placeholder="Juan" />
+      <button class="accion" id="botonUnirme" style="width:100%;margin-top:16px;padding:12px">Sumarme</button>
+    </div>
+
+    <p class="error" id="errorHogar"></p>
+    <button class="tenue" id="salirAuth" style="margin-top:10px">Cerrar sesión</button>
+  </div>
+</div>
+
+<div class="hoja" id="appHoja" style="display:none">
+
+  <svg viewBox="0 0 400 96" role="img" aria-label="Econo $ Mío" style="width:100%;max-width:280px;display:block;margin:0 auto;overflow:visible">
+    <defs>
+      <filter id="hHalo" x="-40%" y="-60%" width="180%" height="220%"><feGaussianBlur stdDeviation="5"/></filter>
+      <filter id="hNucleo" x="-40%" y="-60%" width="180%" height="220%"><feGaussianBlur stdDeviation="1.5"/></filter>
+    </defs>
+    <g font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="38" font-weight="700" letter-spacing="5" text-anchor="middle" fill="none" stroke-linejoin="round">
+      <text x="200" y="60" stroke-width="8" opacity=".45" filter="url(#hHalo)"><tspan stroke="#EDE8FF">ECONO</tspan><tspan dx="12" font-size="54" stroke="#FF2E88">$</tspan><tspan dx="12" stroke="#EDE8FF">MÍO</tspan></text>
+      <text x="200" y="60" stroke-width="4.6" opacity=".75" filter="url(#hNucleo)"><tspan stroke="#EDE8FF">ECONO</tspan><tspan dx="12" font-size="54" stroke="#FF2E88">$</tspan><tspan dx="12" stroke="#EDE8FF">MÍO</tspan></text>
+      <text x="200" y="60" stroke-width="2.2"><tspan stroke="#EDE8FF">ECONO</tspan><tspan dx="12" font-size="54" stroke="#FF2E88">$</tspan><tspan dx="12" stroke="#EDE8FF">MÍO</tspan></text>
+    </g>
+  </svg>
+
+  <!-- ---------- BALANCE ---------- -->
+  <section class="panel vivo" id="panelBalance">
+    <h2 class="titulo">Balance</h2>
+
+    <div class="reloj" id="reloj"></div>
+
+    <div class="balanza">
+      <div class="linea"><span>Entra</span><b id="totalEntra">$ 0</b></div>
+      <div class="linea"><span>Gastos fijos</span><b id="totalFijoBal">$ 0</b></div>
+      <div class="linea"><span>Otros gastos</span><b id="totalVarBal">$ 0</b></div>
+      <div class="linea suma"><span>Sale en total</span><b id="totalSale">$ 0</b></div>
+    </div>
+
+    <div id="barraBal" class="barra" style="display:none"><i></i></div>
+    <div id="piesBal" class="pies" style="display:none">
+      <span class="nota" id="piePorcGasto"></span>
+      <span class="nota" id="piePorcLibre" style="color:var(--neon)"></span>
+    </div>
+
+    <div class="separador"></div>
+    <div class="cabecera"><span class="rotulo">En qué se va</span></div>
+    <div class="desglose" id="desglose"></div>
+  </section>
+
+  <!-- ---------- GASTOS ---------- -->
+  <section class="panel" id="panelGastos">
+    <h2 class="titulo">Gastos</h2>
+    <div style="height:22px"></div>
+    <div class="cabecera"><span class="rotulo">Fijos</span><span class="nota" id="totalFijos"></span></div>
+    <div id="fijos"></div>
+    <button class="sumar" id="masFijo">+ Agregar fijo</button>
+
+    <div class="separador"></div>
+
+    <div class="cabecera"><span class="rotulo">Extras</span><span class="nota" id="totalExtras"></span></div>
+    <div id="extras"></div>
+    <button class="sumar" id="masExtra">+ Agregar extra</button>
+  </section>
+
+  <!-- ---------- INGRESOS ---------- -->
+  <section class="panel" id="panelIngresos">
+    <h2 class="titulo">Ingresos</h2>
+    <div class="doble solo" id="dobleIngresos" style="margin-bottom:24px">
+      <div class="lado"><span class="cifra dolar" id="totalIngresos">$ 0</span></div>
+      <div class="raya"></div>
+      <div class="lado der"><span class="cifra dolar" id="totalIngresosUsd">u$s 0</span></div>
+    </div>
+    <div class="fila" style="margin-bottom:4px">
+      <span style="flex:1.5 1 70px"></span>
+      <span class="nota" style="flex:1 1 50px;text-align:right" id="colMoneda"></span>
+      <span class="nota" style="flex:1 1 50px;text-align:right;color:var(--neon)" id="colMoneda2"></span>
+      <span style="width:20px"></span>
+    </div>
+    <div id="ingresos"></div>
+    <button class="sumar" id="masIngreso">+ Agregar ingreso</button>
+    <p class="nota" id="avisoCot" style="margin:12px 0 0;color:var(--rojo);display:none"></p>
+  </section>
+
+  <!-- ---------- AJUSTES ---------- -->
+  <section class="panel" id="panelAjustes">
+    <div class="cabecera"><span class="rotulo">El dólar</span></div>
+
+    <div class="fila" style="margin-bottom:6px">
+      <label class="etiqueta" style="flex:1" for="fuente">Cotización</label>
+      <select class="campo" id="fuente" style="width:170px;text-align:right">
+        <option value="manual">La cargo yo</option>
+        <option value="blue">Blue</option>
+        <option value="oficial">Oficial</option>
+        <option value="bolsa">MEP / Bolsa</option>
+        <option value="contadoconliqui">Contado con liqui</option>
+        <option value="tarjeta">Tarjeta</option>
+        <option value="cripto">Cripto</option>
+      </select>
+    </div>
+    <div class="fila" style="margin-bottom:6px">
+      <label class="etiqueta" style="flex:1" for="cotizacion" id="labelCot">1 u$s</label>
+      <input class="campo num" id="cotizacion" inputmode="decimal" placeholder="0" style="width:120px" />
+    </div>
+    <div id="filaFuente" style="display:flex;gap:14px;align-items:center;margin-top:14px;flex-wrap:wrap">
+      <button class="accion" id="actualizar">Actualizar</button>
+      <span class="nota" id="estadoCot"></span>
+    </div>
+
+    <div class="fila" style="margin-top:20px">
+      <label class="etiqueta" style="flex:1">Símbolos</label>
+      <input class="campo" id="moneda" maxlength="4" style="width:56px;text-align:center" aria-label="Moneda principal" />
+      <input class="campo" id="moneda2" maxlength="5" style="width:56px;text-align:center;color:var(--neon)" aria-label="Segunda moneda" />
+    </div>
+
+    <div class="separador"></div>
+    <div class="cabecera"><span class="rotulo">Compartir</span></div>
+    <p class="nota" style="line-height:1.5;font-size:12px;margin:0 0 6px">Con este código, otro dispositivo o persona ve y edita los mismos datos.</p>
+    <div class="codigo" id="codigoCasa">------</div>
+    <button class="tenue" id="copiarCodigo" style="margin-top:4px">Copiar código</button>
+
+    <div class="separador"></div>
+    <div class="cabecera"><span class="rotulo">La cuenta</span></div>
+    <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+      <button class="tenue" id="diagDesdeApp">Probar la conexión</button>
+      <button class="tenue" id="salir">Cerrar sesión</button>
+      <button class="tenue" id="borrar" style="margin-left:auto;color:var(--rojo)">Borrar todo</button>
+    </div>
+    <p class="nota" id="huella" style="margin-top:16px;line-height:1.5;font-size:11px"></p>
+  </section>
+
+</div>
+
+<nav class="pestanas" id="pestanas" style="display:none">
+  <button data-panel="panelIngresos">Ingresos</button>
+  <button data-panel="panelGastos">Gastos</button>
+  <button data-panel="panelBalance" class="viva">Balance</button>
+  <button data-panel="panelAjustes">Ajustes</button>
+</nav>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var CFG_CLAVE = "econo:nube";
+  var sb = null, sesion = null, hogarId = null, miOrden = 0, canal = null;
+
+
+  function uid(){ return Math.random().toString(36).slice(2,9); }
+  function p2(n){ return (n<10?"0":"")+n; }
+
+  var VACIO = {
+    personas:[{nombre:"Uno"},{nombre:"Dos"}],
+    moneda:"$", moneda2:"u$s", cotizacion:"", fuente:"blue",
+    ingresos:[], fijos:[], extras:[]
+  };
+  var d = JSON.parse(JSON.stringify(VACIO));
+  var timer = null;
+
+  /* ---------- utilidades ---------- */
+  function num(v){ var n=parseFloat(String(v).replace(",",".")); return isFinite(n)&&n>0?n:0; }
+  function miles(n){ return new Intl.NumberFormat("es",{maximumFractionDigits:0}).format(Math.round(n)); }
+  function fmt(n,m){ return (m||d.moneda)+" "+miles(n); }
+  function $(id){ return document.getElementById(id); }
+  function el(t,c,a){ var n=document.createElement(t); if(c)n.className=c; for(var k in a||{}) n.setAttribute(k,a[k]); return n; }
+  function limpiar(n){ while(n.firstChild) n.removeChild(n.firstChild); }
+  function ver(id,si){ $(id).style.display = si ? (id.indexOf("pantalla")===0 ? "flex" : "block") : "none"; }
+  function red(ok){ $("estadoRed").style.display = ok ? "none" : "block"; }
+
+  /* ================= SUPABASE ================= */
+
+  function arrancarCliente(cfg){
+    sb = window.supabase.createClient(cfg.url, cfg.key, {
+      auth:{ persistSession:true, autoRefreshToken:true }
+    });
+  }
+
+  function iniciar(){
+    var cfg = null;
+    try { cfg = JSON.parse(localStorage.getItem(CFG_CLAVE)); } catch(e){}
+    if(!cfg || !cfg.url || !cfg.key){ ver("pantallaConfig",true); return; }
+    arrancarCliente(cfg);
+    sb.auth.getSession().then(function(r){
+      sesion = r.data.session;
+      if(!sesion){ ver("pantallaAuth",true); return; }
+      buscarHogar();
+    });
+  }
+
+  $("guardarCfg").addEventListener("click", function(){
+    var url = $("cfgUrl").value.trim().replace(/\/+$/,"");
+    var key = $("cfgKey").value.trim();
+    if(!/^https:\/\/.+\.supabase\.co$/.test(url)) return ($("errorCfg").textContent = "La URL debería ser https://algo.supabase.co");
+    if(key.length < 40) return ($("errorCfg").textContent = "Esa clave parece incompleta.");
+    localStorage.setItem(CFG_CLAVE, JSON.stringify({url:url,key:key}));
+    location.reload();
+  });
+
+  /* ---------- cuenta ---------- */
+  var modoRegistro = false;
+  $("cambiarModo").addEventListener("click", function(){
+    modoRegistro = !modoRegistro;
+    $("tituloAuth").textContent = modoRegistro ? "Crear cuenta" : "Entrar";
+    $("botonAuth").textContent  = modoRegistro ? "Crear cuenta" : "Entrar";
+    $("cambiarModo").textContent = modoRegistro ? "Ya tengo cuenta" : "Todavía no tengo cuenta";
+    $("pass").setAttribute("autocomplete", modoRegistro ? "new-password" : "current-password");
+    $("errorAuth").textContent = "";
+  });
+
+  $("olvidoNube").addEventListener("click", function(){
+    if(confirm("¿Desconectar esta base y volver a la pantalla de configuración?")){
+      localStorage.removeItem(CFG_CLAVE); location.reload();
+    }
+  });
+
+  $("botonAuth").addEventListener("click", function(){
+    var mail = $("mail").value.trim(), pass = $("pass").value;
+    $("errorAuth").textContent = "";
+    if(!mail || pass.length < 6) return ($("errorAuth").textContent = "Correo y contraseña de al menos 6 caracteres.");
+    $("botonAuth").textContent = "…";
+    var promesa = modoRegistro
+      ? sb.auth.signUp({ email:mail, password:pass })
+      : sb.auth.signInWithPassword({ email:mail, password:pass });
+    promesa.then(function(r){
+      if(r.error) throw r.error;
+      if(!r.data.session){
+        $("botonAuth").textContent = "Crear cuenta";
+        $("errorAuth").textContent = "Revisá tu correo para confirmar la cuenta y volvé a entrar.";
+        return;
+      }
+      sesion = r.data.session;
+      ver("pantallaAuth",false);
+      buscarHogar();
+    }).catch(function(e){
+      $("botonAuth").textContent = modoRegistro ? "Crear cuenta" : "Entrar";
+      $("errorAuth").textContent = traducir(e.message);
+    });
+  });
+
+  function traducir(m){
+    m = String(m||"");
+    if(/Invalid login/i.test(m)) return "Correo o contraseña incorrectos.";
+    if(/already registered/i.test(m)) return "Ese correo ya tiene cuenta. Entrá en vez de crear.";
+    if(/Email not confirmed/i.test(m)) return "Falta confirmar el correo.";
+    if(/rate limit/i.test(m)) return "Demasiados intentos. Esperá un momento.";
+    return m;
+  }
+
+  ["mail","pass"].forEach(function(id){
+    $(id).addEventListener("keydown", function(e){ if(e.key==="Enter") $("botonAuth").click(); });
+  });
+  $("salirAuth").addEventListener("click", cerrarSesion);
+
+  function cerrarSesion(){
+    if(canal) sb.removeChannel(canal);
+    sb.auth.signOut().then(function(){ location.reload(); });
+  }
+
+  /* ---------- hogar ---------- */
+  function buscarHogar(){
+    sb.from("miembros").select("hogar_id,orden,nombre").then(function(r){
+      if(r.error){ red(false); $("errorHogar").textContent = r.error.message; ver("pantallaHogar",true); return; }
+      if(!r.data.length){ ver("pantallaHogar",true); return; }
+      hogarId = r.data[0].hogar_id;
+      miOrden = r.data[0].orden;
+      cargarTodo();
+    });
+  }
+
+  $("botonCrearHogar").addEventListener("click", function(){
+    var nom = $("miNombreA").value.trim() || "Uno";
+    $("errorHogar").textContent = "";
+    sb.rpc("crear_hogar", { p_nombre:"Casa", p_mi_nombre:nom }).then(function(r){
+      if(r.error) throw r.error;
+      var fila = r.data[0] || r.data;
+      hogarId = fila.id; miOrden = 0;
+      d.personas[0].nombre = nom;
+      guardarDatos(true);
+      ver("pantallaHogar",false);
+      cargarTodo();
+    }).catch(function(e){ $("errorHogar").textContent = e.message; });
+  });
+
+  $("botonUnirme").addEventListener("click", function(){
+    var codigo = $("codigoHogar").value.trim().toUpperCase();
+    var nom = $("miNombreB").value.trim() || "Dos";
+    $("errorHogar").textContent = "";
+    if(codigo.length < 4) return ($("errorHogar").textContent = "Falta el código.");
+    sb.rpc("unirse_hogar", { p_codigo:codigo, p_mi_nombre:nom }).then(function(r){
+      if(r.error) throw r.error;
+      hogarId = r.data; miOrden = 1;
+      ver("pantallaHogar",false);
+      cargarTodo();
+    }).catch(function(e){ $("errorHogar").textContent = e.message; });
+  });
+
+  /* ---------- carga y guardado ---------- */
+  function cargarTodo(){
+    return Promise.all([
+      sb.from("hogares").select("codigo,datos").eq("id",hogarId).single()
+    ]).then(function(res){
+      var h = res[0];
+      if(h.error) throw h.error;
+      red(true);
+
+      var base = JSON.parse(JSON.stringify(VACIO));
+      var datos = h.data.datos || {};
+      for(var k in base) if(datos[k] !== undefined) base[k] = datos[k];
+      d = base;
+
+      $("codigoCasa").textContent = h.data.codigo;
+
+      mostrarApp();
+      escuchar();
+    }).catch(function(e){
+      red(false);
+      alert("No se pudieron traer los datos: " + e.message);
+    });
+  }
+
+  var guardarDatos = (function(){
+    var t;
+    return function(ya){
+      clearTimeout(t);
+      var hacer = function(){
+        if(!hogarId) return;
+        var copia = JSON.parse(JSON.stringify(d));
+        sb.from("hogares").update({ datos:copia }).eq("id",hogarId).then(function(r){
+          red(!r.error);
+        });
+      };
+      if(ya) hacer(); else t = setTimeout(hacer, 600);
+    };
+  })();
+
+  function escuchar(){
+    if(canal) sb.removeChannel(canal);
+    canal = sb.channel("casa-"+hogarId)
+      .on("postgres_changes",
+          { event:"UPDATE", schema:"public", table:"hogares", filter:"id=eq."+hogarId },
+          function(msg){
+            var datos = msg.new && msg.new.datos;
+            if(!datos) return;
+            if(document.activeElement && document.activeElement.classList &&
+               document.activeElement.classList.contains("campo")) return; // no pisar lo que se tipea
+            for(var k in datos) d[k] = datos[k];
+            pintarIngresos(); pintarFijos(); pintarExtras(); pintarAjustes(); pintarBalance();
+          })
+      .subscribe(function(estado){ red(estado === "SUBSCRIBED"); });
+  }
+
+  window.addEventListener("online",  function(){ if(hogarId) cargarTodo(); });
+  window.addEventListener("offline", function(){ red(false); });
+
+  /* ================= CÁLCULO ================= */
+
+  function cotiz(){ return num(d.cotizacion); }
+
+  /* ================= PANELES ================= */
+
+  function resumen(){
+    var c = cotiz();
+    var enPesos   = d.ingresos.reduce(function(a,i){ return a+num(i.monto); },0);
+    var enDolares = d.ingresos.reduce(function(a,i){ return a+num(i.monto2); },0);
+    var entra = enPesos + enDolares*c;
+    var fijo  = d.fijos.reduce(function(a,g){ return a+num(g.monto); },0);
+    var extra = d.extras.reduce(function(a,g){ return a+num(g.monto); },0);
+    return { c:c, entra:entra, enPesos:enPesos, enDolares:enDolares,
+             fijo:fijo, vari:extra, sale:fijo+extra, queda:entra-fijo-extra };
+  }
+
+  /* ---------- cuánto falta para fin de mes ---------- */
+  function pintarDias(){
+    var caja = $("reloj"); limpiar(caja);
+
+    var h = new Date();
+    var total   = new Date(h.getFullYear(), h.getMonth()+1, 0).getDate();
+    var pasados = h.getDate();
+    var faltan  = Math.max(0, total - pasados);
+    var frac    = faltan / total;
+
+    var NS = "http://www.w3.org/2000/svg";
+    function nodo(t, attrs){
+      var n = document.createElementNS(NS, t);
+      for(var k in attrs) n.setAttribute(k, attrs[k]);
+      return n;
+    }
+
+    var R = 88, GRUESO = 18, circ = 2*Math.PI*R;
+    var svg = nodo("svg", { viewBox:"0 0 220 220", role:"img",
+      "aria-label": faltan + " días para terminar el mes" });
+
+    // los días que ya pasaron
+    svg.appendChild(nodo("circle", { cx:110, cy:110, r:R, fill:"none",
+      stroke:"#2A1B52", "stroke-width":GRUESO }));
+
+    // los que faltan
+    var arco = nodo("circle", { cx:110, cy:110, r:R, fill:"none",
+      stroke:"#3DFF9E", "stroke-width":GRUESO, "stroke-linecap":"butt",
+      "stroke-dasharray": circ, "stroke-dashoffset": circ,
+      transform:"rotate(-90 110 110)",
+      style:"filter:drop-shadow(0 0 8px rgba(61,255,158,.8))" });
+    arco.setAttribute("class","arco");
+    svg.appendChild(arco);
+
+    // el texto del centro
+    var num = nodo("text", { x:110, y:98, "text-anchor":"middle",
+      fill:"#3DFF9E", "font-family":"Impact,'Arial Black',sans-serif", "font-size":46,
+      style:"filter:drop-shadow(0 0 10px rgba(61,255,158,.7))" });
+    num.textContent = faltan;
+    svg.appendChild(num);
+
+    var uni = nodo("text", { x:110, y:120, "text-anchor":"middle", fill:"#EDE8FF",
+      "font-family":"'Helvetica Neue',Arial,sans-serif", "font-size":13,
+      "font-weight":700, "letter-spacing":3 });
+    uni.textContent = faltan === 1 ? "DÍA" : "DÍAS";
+    svg.appendChild(uni);
+
+    var l1 = nodo("text", { x:110, y:140, "text-anchor":"middle", fill:"#8F82C9",
+      "font-family":"'Helvetica Neue',Arial,sans-serif", "font-size":10,
+      "font-weight":700, "letter-spacing":2 });
+    l1.textContent = "PARA TERMINAR";
+    svg.appendChild(l1);
+
+    var l2 = nodo("text", { x:110, y:153, "text-anchor":"middle", fill:"#8F82C9",
+      "font-family":"'Helvetica Neue',Arial,sans-serif", "font-size":10,
+      "font-weight":700, "letter-spacing":2 });
+    l2.textContent = "EL MES";
+    svg.appendChild(l2);
+
+    if(faltan === 0){
+      num.textContent = "HOY";
+      num.setAttribute("font-size", 34);
+      uni.textContent = "TERMINA";
+      l1.textContent = "EL MES";
+      l2.textContent = "";
+    }
+
+    caja.appendChild(svg);
+
+    // el arco se dibuja solo, después de entrar en pantalla
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        arco.setAttribute("stroke-dashoffset", circ*(1-frac));
+      });
+    });
+  }
+
+  function pintarBalance(){
+    var r = resumen();
+
+    /* cabecera de la pestaña Ingresos: verde, o rojo si se gasta de más */
+    var apretado = r.sale > r.entra;
+    var cielo = $("cielo");
+    if(cielo){
+      cielo.classList.toggle("neg", apretado);
+      cielo.classList.toggle("pos", !apretado);
+    }
+    var tono = "cifra dolar" + (apretado ? " rojo" : "");
+    $("totalIngresos").textContent = fmt(r.enPesos);
+    $("totalIngresos").className = tono;
+    if(r.enDolares > 0){
+      $("dobleIngresos").className = "doble";
+      $("totalIngresosUsd").textContent = fmt(r.enDolares, d.moneda2);
+      $("totalIngresosUsd").className = tono;
+    } else {
+      $("dobleIngresos").className = "doble solo";
+    }
+
+    $("totalEntra").textContent    = fmt(r.entra);
+    $("totalFijoBal").textContent  = fmt(r.fijo);
+    $("totalVarBal").textContent   = fmt(r.vari);
+    $("totalSale").textContent     = fmt(r.sale);
+
+    var barra=$("barraBal"), pies=$("piesBal");
+    if(r.entra>0){
+      var usado = Math.min(100, Math.max(0,(r.sale/r.entra)*100));
+      barra.style.display="block"; pies.style.display="flex";
+      barra.className = "barra" + (r.sale/r.entra>1.005 ? " excedido" : "");
+      barra.querySelector("i").style.width = usado+"%";
+      $("piePorcGasto").textContent = "GASTADO "+Math.round(usado)+"%";
+      $("piePorcLibre").textContent = "LIBRE "+Math.max(0,100-Math.round(usado))+"%";
+    } else { barra.style.display="none"; pies.style.display="none"; }
+
+    $("totalFijos").textContent  = fmt(r.fijo);
+    $("totalExtras").textContent = fmt(r.vari);
+
+    var caja=$("desglose"); limpiar(caja);
+    if(r.sale<=0){
+      var vac=el("div","nota"); vac.textContent="Todavía no hay gastos cargados.";
+      caja.appendChild(vac);
+      return;
+    }
+    var tonos = ["#A24BFF","#FF2E88","#25E7FF","#FF8A3D","#FFC93C","#3DFF9E","#FF5470","#8F82C9"];
+    var lista = [];
+    d.fijos.forEach(function(g){ if(num(g.monto)>0) lista.push({n:g.nombre||"Fijo", v:num(g.monto)}); });
+    d.extras.forEach(function(g){ if(num(g.monto)>0) lista.push({n:g.nombre||"Extra", v:num(g.monto)}); });
+    lista.sort(function(a,b){ return b.v-a.v; });
+    lista.slice(0,8).forEach(function(item,i){
+      var color = tonos[i % tonos.length];
+      var pct = Math.round(item.v/r.sale*100);
+      var fila=el("div");
+      var punto=el("span","punto"); punto.style.background=color; punto.style.boxShadow="0 0 8px "+color;
+      var nom=el("span","nombre"); nom.textContent=item.n;
+      var riel=el("span","riel");
+      var relleno=el("i"); relleno.style.width=Math.max(2,pct)+"%"; relleno.style.background=color;
+      relleno.style.boxShadow="0 0 8px "+color;
+      riel.appendChild(relleno);
+      var val=el("b"); val.textContent=pct+"%"; val.style.color=color;
+      fila.appendChild(punto); fila.appendChild(nom); fila.appendChild(riel); fila.appendChild(val);
+      fila.title=fmt(item.v);
+      caja.appendChild(fila);
+    });
+  }
+
+  /* una fila = nombre + monto, para fijos y para extras */
+  function filaGasto(lista, g, repintar){
+    var fila = el("div","fila");
+
+    var nom = el("input","campo",{placeholder:"En qué"});
+    nom.style.flex = "2 1 100px"; nom.value = g.nombre;
+    nom.addEventListener("input", function(){ g.nombre = nom.value; guardarDatos(); });
+
+    var mo = el("input","campo num",{inputmode:"decimal",placeholder:"0"});
+    mo.style.flex = "1 1 70px"; mo.value = g.monto;
+    mo.addEventListener("input", function(){ g.monto = mo.value; pintarBalance(); guardarDatos(); });
+
+    var x = el("button","x",{"aria-label":"Quitar"});
+    x.textContent = "×";
+    x.addEventListener("click", function(){
+      var i = lista.indexOf(g);
+      if(i >= 0) lista.splice(i,1);
+      repintar(); pintarBalance(); guardarDatos(true);
+    });
+
+    fila.appendChild(nom); fila.appendChild(mo); fila.appendChild(x);
+    return fila;
+  }
+
+  function pintarFijos(){
+    var caja = $("fijos"); limpiar(caja);
+    d.fijos.forEach(function(g){ caja.appendChild(filaGasto(d.fijos, g, pintarFijos)); });
+  }
+
+  function pintarExtras(){
+    var caja = $("extras"); limpiar(caja);
+    d.extras.forEach(function(g){ caja.appendChild(filaGasto(d.extras, g, pintarExtras)); });
+  }
+
+  function pintarIngresos(){
+    var caja=$("ingresos"); limpiar(caja);
+    d.ingresos.forEach(function(i){
+      var fila=el("div","fila");
+      var nom=el("input","campo",{placeholder:"Sueldo"});
+      nom.style.flex="1.5 1 70px"; nom.value=i.nombre;
+      nom.addEventListener("input",function(){ i.nombre=nom.value; guardarDatos(); });
+
+      var a=el("input","campo num",{inputmode:"decimal",placeholder:"0"});
+      a.style.flex="1 1 50px"; a.value=i.monto;
+      a.addEventListener("input",function(){ i.monto=a.value; refrescarIngresos(); });
+
+      var b=el("input","campo num",{inputmode:"decimal",placeholder:"0"});
+      b.style.flex="1 1 50px"; b.style.color="var(--neon)"; b.value=i.monto2||"";
+      b.addEventListener("input",function(){ i.monto2=b.value; refrescarIngresos(); });
+
+      var x=el("button","x",{"aria-label":"Quitar"}); x.textContent="×";
+      x.addEventListener("click",function(){
+        d.ingresos=d.ingresos.filter(function(o){ return o.id!==i.id; });
+        pintarIngresos(); pintarBalance(); guardarDatos(true);
+      });
+
+      fila.appendChild(nom); fila.appendChild(a); fila.appendChild(b); fila.appendChild(x);
+      caja.appendChild(fila);
+    });
+  }
+
+  function refrescarIngresos(){
+    var c=cotiz();
+    var total=d.ingresos.reduce(function(a,i){ return a+num(i.monto)+num(i.monto2)*c; },0);
+    var enAlt=d.ingresos.reduce(function(a,i){ return a+num(i.monto2); },0);
+    var aviso=$("avisoCot");
+    if(enAlt>0 && c<=0){ aviso.style.display="block"; aviso.textContent=miles(enAlt)+" "+d.moneda2+" SIN COTIZACIÓN"; }
+    else aviso.style.display="none";
+    $("colMoneda").textContent=d.moneda;
+    $("colMoneda2").textContent=d.moneda2;
+    $("labelCot").textContent="1 "+d.moneda2;
+    pintarBalance();
+    guardarDatos();
+  }
+
+  function pintarAjustes(){
+    $("fuente").value=d.fuente||"manual";
+    $("cotizacion").value=d.cotizacion;
+    $("moneda").value=d.moneda;
+    $("moneda2").value=d.moneda2;
+    var auto=(d.fuente||"manual")!=="manual";
+    $("cotizacion").readOnly=auto;
+    $("filaFuente").style.display=auto?"flex":"none";
+  }
+
+  function traerCotizacion(){
+    var fuente=d.fuente;
+    if(!fuente||fuente==="manual") return;
+    $("estadoCot").textContent="…";
+    fetch("https://dolarapi.com/v1/dolares")
+      .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function(lista){
+        var item=null;
+        lista.forEach(function(x){ if(x.casa===fuente) item=x; });
+        if(!item||!item.venta) throw new Error("sin dato");
+        d.cotizacion=String(item.venta);
+        $("cotizacion").value=d.cotizacion;
+        $("estadoCot").textContent=new Date().toLocaleTimeString("es",{hour:"2-digit",minute:"2-digit"});
+        $("estadoCot").style.color="var(--tenue)";
+        refrescarIngresos();
+      })
+      .catch(function(){ $("estadoCot").textContent="SIN CONEXIÓN"; $("estadoCot").style.color="var(--rojo)"; });
+  }
+  function programar(){
+    clearInterval(timer);
+    if((d.fuente||"manual")!=="manual"){ traerCotizacion(); timer=setInterval(traerCotizacion,5*60*1000); }
+  }
+
+  /* ================= EVENTOS ================= */
+
+  $("masFijo").addEventListener("click",function(){
+    d.fijos.push({id:uid(),nombre:"",monto:""});
+    pintarFijos(); guardarDatos(true);
+  });
+  $("masExtra").addEventListener("click",function(){
+    d.extras.push({id:uid(),nombre:"",monto:""});
+    pintarExtras(); guardarDatos(true);
+  });
+  $("masIngreso").addEventListener("click",function(){
+    d.ingresos.push({id:uid(),nombre:"",monto:"",monto2:""});
+    pintarIngresos(); guardarDatos(true);
+  });
+
+  $("fuente").addEventListener("change",function(){ d.fuente=$("fuente").value; pintarAjustes(); programar(); guardarDatos(true); });
+  $("cotizacion").addEventListener("input",function(){ d.cotizacion=$("cotizacion").value; refrescarIngresos(); });
+  $("actualizar").addEventListener("click",traerCotizacion);
+  $("moneda").addEventListener("input",function(){ d.moneda=$("moneda").value; refrescarIngresos(); });
+  $("moneda2").addEventListener("input",function(){ d.moneda2=$("moneda2").value; refrescarIngresos(); });
+  Array.prototype.forEach.call(document.querySelectorAll(".pestanas button"),function(b){
+    b.addEventListener("click",function(){
+      Array.prototype.forEach.call(document.querySelectorAll(".pestanas button"),function(o){ o.classList.remove("viva"); });
+      Array.prototype.forEach.call(document.querySelectorAll(".panel"),function(p){ p.classList.remove("vivo"); });
+      b.classList.add("viva");
+      $(b.getAttribute("data-panel")).classList.add("vivo");
+      window.scrollTo(0,0);
+    });
+  });
+
+  $("copiarCodigo").addEventListener("click",function(){
+    var texto = $("codigoCasa").textContent.trim();
+    var aviso = $("copiarCodigo");
+    var listo = function(){ aviso.textContent="Copiado"; setTimeout(function(){ aviso.textContent="Copiar código"; },1600); };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(texto).then(listo).catch(function(){ aviso.textContent="No se pudo copiar"; });
+    } else {
+      var tmp=document.createElement("textarea"); tmp.value=texto; document.body.appendChild(tmp);
+      tmp.select(); try{ document.execCommand("copy"); listo(); }catch(e){}
+      document.body.removeChild(tmp);
+    }
+  });
+
+  $("salir").addEventListener("click",cerrarSesion);
+  $("borrar").addEventListener("click",function(){
+    if(!confirm("¿Borrar todos los datos de esta casa? Los dos los pierden.")) return;
+    d.ingresos=[]; d.fijos=[]; d.extras=[];
+    guardarDatos(true);
+    mostrarApp();
+  });
+
+  /* ================= ARRANQUE ================= */
+  function mostrarApp(){
+    ver("pantallaConfig",false); ver("pantallaAuth",false); ver("pantallaHogar",false);
+    $("appHoja").style.display="block";
+    $("pestanas").style.display="flex";
+    pintarAjustes();
+    pintarIngresos(); refrescarIngresos();
+    pintarFijos(); pintarExtras(); pintarBalance(); pintarDias();
+    programar();
+    $("huella").textContent = "Sincronizado con tu base: los mismos datos en todos tus dispositivos.";
+  }
+
+
+  /* ================= DIAGNÓSTICO ================= */
+
+  function diagPaso(texto){
+    var fila = el("div","paso esperando");
+    var marca = el("span","marca"); marca.textContent = "·";
+    var cuerpo = el("div"); cuerpo.style.flex = "1";
+    var t = el("span"); t.textContent = texto;
+    cuerpo.appendChild(t);
+    fila.appendChild(marca); fila.appendChild(cuerpo);
+    $("diagLista").appendChild(fila);
+    return {
+      bien: function(detalle){
+        fila.className = "paso ok"; marca.textContent = "✓";
+        if(detalle){ var x=el("span","arreglo"); x.textContent=detalle; cuerpo.appendChild(x); }
+      },
+      mal: function(arreglo){
+        fila.className = "paso mal"; marca.textContent = "✕";
+        if(arreglo){ var x=el("span","arreglo"); x.textContent=arreglo; cuerpo.appendChild(x); }
+      }
+    };
+  }
+
+  function explicarError(e){
+    var code = (e && e.code) || "";
+    var msg  = String((e && e.message) || e || "");
+    if(code === "42P01" || /does not exist/i.test(msg))
+      return "Faltan las tablas: abrí el SQL Editor de Supabase y corré el archivo esquema.sql entero.";
+    if(code === "42883")
+      return "Faltan las funciones: volvé a correr esquema.sql completo, no solo la parte de las tablas.";
+    if(code === "PGRST301" || /JWT|not authenticated/i.test(msg))
+      return "Falta iniciar sesión. Creá tu cuenta primero.";
+    if(/Failed to fetch|NetworkError|load failed/i.test(msg))
+      return "No se llega al servidor. Revisá la URL del proyecto y que tengas internet.";
+    if(/Invalid API key|apikey/i.test(msg))
+      return "La clave anon está mal pegada. Copiala de nuevo desde Project Settings → API Keys.";
+    return msg;
+  }
+
+  function correrDiagnostico(){
+    ver("pantallaDiag", true);
+    limpiar($("diagLista"));
+
+    var cfg = null;
+    try { cfg = JSON.parse(localStorage.getItem(CFG_CLAVE)); } catch(e){}
+
+    var p1 = diagPaso("Las llaves están cargadas");
+    if(!cfg || !cfg.url || !cfg.key){
+      p1.mal("Todavía no pegaste la URL y la clave anon.");
+      return;
+    }
+    p1.bien(cfg.url);
+
+    if(!sb) arrancarCliente(cfg);
+
+    var p2 = diagPaso("El proyecto de Supabase responde");
+    fetch(cfg.url + "/auth/v1/health", { headers:{ apikey: cfg.key } })
+      .then(function(r){
+        if(r.ok) p2.bien("El servidor contesta.");
+        else if(r.status === 401) p2.mal("La clave anon no es válida para esta URL.");
+        else p2.mal("El servidor respondió " + r.status + ".");
+      })
+      .catch(function(e){ p2.mal(explicarError(e)); })
+      .then(function(){
+        var p3 = diagPaso("Tenés sesión iniciada");
+        return sb.auth.getSession().then(function(r){
+          if(r.data.session){ p3.bien(r.data.session.user.email); }
+          else { p3.mal("Todavía no entraste con tu cuenta. Los pasos que siguen van a fallar hasta que lo hagas."); }
+        });
+      })
+      .then(function(){
+        var p4 = diagPaso("Las tablas existen");
+        return sb.from("hogares").select("id").limit(1).then(function(r){
+          if(r.error) p4.mal(explicarError(r.error));
+          else p4.bien("La casa es accesible.");
+        });
+      })
+      .then(function(){
+        var p5 = diagPaso("Las funciones y las reglas están puestas");
+        return sb.rpc("es_miembro", { h: "00000000-0000-0000-0000-000000000000" }).then(function(r){
+          if(r.error) p5.mal(explicarError(r.error));
+          else p5.bien("Las reglas de acceso responden.");
+        });
+      })
+      .then(function(){
+        var p6 = diagPaso("El tiempo real está encendido");
+        return new Promise(function(listo){
+          var terminado = false;
+          var prueba = sb.channel("prueba-" + Math.random().toString(36).slice(2))
+            .on("postgres_changes", { event:"*", schema:"public", table:"hogares" }, function(){})
+            .subscribe(function(estado){
+              if(terminado) return;
+              if(estado === "SUBSCRIBED"){
+                terminado = true; p6.bien("Los cambios del otro te van a llegar solos.");
+                sb.removeChannel(prueba); listo();
+              } else if(estado === "CHANNEL_ERROR" || estado === "TIMED_OUT"){
+                terminado = true;
+                p6.mal("Corré la última parte de esquema.sql, la que dice alter publication supabase_realtime.");
+                sb.removeChannel(prueba); listo();
+              }
+            });
+          setTimeout(function(){
+            if(terminado) return;
+            terminado = true;
+            p6.mal("No hubo respuesta en 8 segundos. Puede ser la red, o falta encender el tiempo real en el SQL.");
+            try { sb.removeChannel(prueba); } catch(e){}
+            listo();
+          }, 8000);
+        });
+      })
+      .then(function(){
+        var cierre = diagPaso("Diagnóstico terminado");
+        cierre.bien("Si está todo en verde, ya podés crear la casa.");
+      });
+  }
+
+  $("diagDesdeCfg").addEventListener("click", function(){
+    var url = $("cfgUrl").value.trim().replace(/\/+$/,"");
+    var key = $("cfgKey").value.trim();
+    if(url && key) localStorage.setItem(CFG_CLAVE, JSON.stringify({url:url,key:key}));
+    correrDiagnostico();
+  });
+  $("diagDesdeAuth").addEventListener("click", correrDiagnostico);
+  $("diagDesdeApp").addEventListener("click", correrDiagnostico);
+  $("diagVolver").addEventListener("click", function(){ location.reload(); });
+
+  /* ---------- portada ---------- */
+  (function(){
+    var portada = document.getElementById("portada");
+    var apagado = false;
+    function apagar(){
+      if(apagado) return;
+      apagado = true;
+      portada.classList.add("apagada");
+      var cielo = document.getElementById("cielo");
+      if(cielo) cielo.classList.add("encendido");
+      setTimeout(function(){ portada.style.display = "none"; }, 750);
+    }
+    setTimeout(apagar, 3000);
+    portada.addEventListener("click", apagar);   // tocar para saltearla
+  })();
+
+  iniciar();
+})();
+
+</script>
+</body>
+</html>
