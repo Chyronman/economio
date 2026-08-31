@@ -67,7 +67,6 @@
     left:-70%;right:-70%;bottom:0;height:44vh;opacity:0;
     transform:perspective(300px) rotateX(78deg);
     transform-origin:50% 0;
-    animation:correrSuelo 3.4s linear infinite;
     transition:opacity 1.4s ease;
   }
   .suelo.v{
@@ -80,7 +79,6 @@
       repeating-linear-gradient(0deg,  rgba(255,84,112,.50) 0 2px, transparent 2px 72px),
       repeating-linear-gradient(90deg, rgba(255,84,112,.38) 0 2px, transparent 2px 72px);
   }
-  @keyframes correrSuelo{ from{background-position:0 0} to{background-position:0 72px} }
 
   .cielo.pos .verde,.cielo.pos .v{opacity:1}
   .cielo.neg .rojo,.cielo.neg .r{opacity:1}
@@ -93,7 +91,16 @@
       rgba(10,5,24,.66) 70%,
       rgba(10,5,24,.84) 100%);
   }
-  .hoja{max-width:620px;margin:0 auto;padding:26px 20px 90px;position:relative;z-index:1}
+  .hoja{max-width:620px;margin:0 auto;padding:58px 20px 90px;position:relative;z-index:1}
+  .salida{
+    position:fixed;top:12px;right:12px;z-index:5;
+    border:2px solid var(--reja);background:rgba(10,5,24,.72);
+    color:var(--tenue);font-family:var(--body);font-size:10px;font-weight:700;
+    letter-spacing:.14em;text-transform:uppercase;padding:9px 12px;cursor:pointer;
+    -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+    transition:color .2s ease, border-color .2s ease;
+  }
+  .salida:hover{color:var(--tinta);border-color:var(--magenta)}
 
   .rotulo{font-family:var(--display);font-size:16px;letter-spacing:.16em;text-transform:uppercase;color:var(--cian);text-shadow:0 0 12px rgba(37,231,255,.55)}
   .cabecera{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:12px}
@@ -267,7 +274,6 @@
   #tituloAuth, #pieAuth{display:none}
 
   @media (prefers-reduced-motion:reduce){
-    .suelo{animation:none}
     .marca .signo,.marca .izq,.marca .der,.portada .brasa,.cerrojo > *{
       animation:none;opacity:1;transform:none}
   }
@@ -398,6 +404,9 @@
 
 <div class="hoja" id="appHoja" style="display:none">
 
+  <button class="salida" id="salir">Cerrar sesión</button>
+
+
   <svg viewBox="0 0 400 96" role="img" aria-label="Econo $ Mío" style="width:100%;max-width:280px;display:block;margin:0 auto;overflow:visible">
     <defs>
       <filter id="hHalo" x="-40%" y="-60%" width="180%" height="220%"><feGaussianBlur stdDeviation="5"/></filter>
@@ -509,7 +518,6 @@
     <div class="cabecera"><span class="rotulo">La cuenta</span></div>
     <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
       <button class="tenue" id="diagDesdeApp">Probar la conexión</button>
-      <button class="tenue" id="salir">Cerrar sesión</button>
       <button class="tenue" id="borrar" style="margin-left:auto;color:var(--rojo)">Borrar todo</button>
     </div>
     <p class="nota" id="huella" style="margin-top:16px;line-height:1.5;font-size:11px"></p>
