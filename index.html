@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#0A0518" />
 <title>Econo $ Mío</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="manifest" href="/manifest.webmanifest" />
@@ -17,8 +20,11 @@
     --noche:#0A0518; --capa:#150C2E; --tinta:#EDE8FF; --tenue:#8F82C9;
     --reja:#2A1B52; --magenta:#FF2E88; --cian:#25E7FF; --violeta:#A24BFF;
     --neon:#3DFF9E; --rojo:#FF5470; --naranja:#FF8A3D; --amarillo:#FFC93C;
-    --display:Impact,Haettenschweiler,"Franklin Gothic Bold","Arial Black",sans-serif;
-    --body:"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --display:Anton,Impact,Haettenschweiler,"Arial Narrow Bold",sans-serif;
+    --body:Inter,"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --script:Pacifico,"Brush Script MT","Segoe Script",cursive;
+    --luzVerde:0 0 2px rgba(255,255,255,.9), 0 0 9px #7CFFC4, 0 0 20px #3DFF9E, 0 0 40px rgba(61,255,158,.55);
+    --luzRosa:0 0 2px rgba(255,255,255,.9), 0 0 9px #FFA8D4, 0 0 20px #FF2E88, 0 0 40px rgba(255,46,136,.55);
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
@@ -92,27 +98,21 @@
       rgba(10,5,24,.84) 100%);
   }
   .hoja{max-width:620px;margin:0 auto;padding:58px 20px 90px;position:relative;z-index:1}
-  .salida{
-    position:fixed;top:12px;right:12px;z-index:5;
-    border:2px solid var(--reja);background:rgba(10,5,24,.72);
-    color:var(--tenue);font-family:var(--body);font-size:10px;font-weight:700;
-    letter-spacing:.14em;text-transform:uppercase;padding:9px 12px;cursor:pointer;
-    -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
-    transition:color .2s ease, border-color .2s ease;
-  }
-  .salida:hover{color:var(--tinta);border-color:var(--magenta)}
 
-  .rotulo{font-family:var(--display);font-size:16px;letter-spacing:.16em;text-transform:uppercase;color:var(--cian);text-shadow:0 0 12px rgba(37,231,255,.55)}
+  .rotulo{font-family:var(--script);font-size:21px;letter-spacing:.01em;text-transform:none;
+    color:#FFF2F8;text-shadow:var(--luzRosa)}
   .cabecera{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:12px}
   .nota{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--tenue)}
-  .etiqueta{font-size:14px;font-weight:600;color:var(--tenue)}
+  .etiqueta{font-family:var(--script);font-size:17px;font-weight:400;color:#F0E4F4;
+    text-shadow:0 0 8px rgba(255,46,136,.45), 0 0 18px rgba(255,46,136,.25)}
   .separador{margin:26px 0;height:2px;background:linear-gradient(90deg,var(--magenta),var(--violeta) 45%,var(--cian));opacity:.5}
 
 
   /* pestañas */
   .pestanas{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;background:rgba(10,5,24,.96);border-top:2px solid var(--reja);backdrop-filter:blur(6px)}
-  .pestanas button{flex:1;border:0;background:none;color:var(--tenue);font-family:var(--display);font-size:13px;letter-spacing:.1em;text-transform:uppercase;padding:16px 4px 18px;cursor:pointer;transition:all .2s}
-  .pestanas button.viva{color:var(--cian);text-shadow:0 0 12px var(--cian);box-shadow:inset 0 3px 0 var(--cian)}
+  .pestanas button{flex:1;border:0;background:none;color:#B6A9DD;font-family:var(--script);
+    font-size:17px;letter-spacing:.01em;text-transform:none;padding:14px 4px 16px;cursor:pointer;transition:all .2s}
+  .pestanas button.viva{color:#F4FFFA;text-shadow:var(--luzVerde);box-shadow:inset 0 3px 0 #3DFF9E}
   .panel{display:none}
   .panel.vivo{display:block}
 
@@ -125,16 +125,6 @@
   .num{text-align:right;font-variant-numeric:tabular-nums}
   select.campo{cursor:pointer}
   select.campo option{background:var(--capa);color:var(--tinta)}
-  .x{border:0;background:none;color:#4C3E7A;font-size:21px;cursor:pointer;padding:6px 0;width:20px;line-height:1}
-  .x:hover{color:var(--rojo)}
-  .accion{border:2px solid var(--magenta);background:transparent;font-family:var(--display);font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--magenta);padding:9px 14px;cursor:pointer;transition:all .2s}
-  .accion:hover{background:rgba(255,46,136,.14);box-shadow:0 0 14px rgba(255,46,136,.45)}
-  .accion.cian{border-color:var(--cian);color:var(--cian)}
-  .accion.cian:hover{background:rgba(37,231,255,.14);box-shadow:0 0 14px rgba(37,231,255,.45)}
-  .tenue{border:0;background:none;font-family:var(--body);font-size:13px;font-weight:600;color:var(--tenue);padding:3px 0;cursor:pointer}
-  .tenue:hover{color:var(--tinta)}
-  .sumar{width:100%;border:0;background:none;text-align:left;font-family:var(--display);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--violeta);padding:12px 2px;cursor:pointer}
-  .sumar:hover{color:var(--cian)}
   *:focus-visible{outline:2px solid var(--cian);outline-offset:3px}
 
   /* cifras */
@@ -161,13 +151,14 @@
   /* puerta */
   .puerta{position:fixed;inset:0;z-index:6;background:rgba(10,5,24,.94);display:flex;align-items:center;justify-content:center;padding:24px;overflow:auto}
   .cerrojo{width:100%;max-width:380px}
-  .cerrojo h2{font-family:var(--display);font-size:19px;letter-spacing:.16em;text-transform:uppercase;color:var(--cian);text-shadow:0 0 12px rgba(37,231,255,.55);margin:26px 0 6px}
-  .cerrojo label{display:block;font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--tenue);margin:16px 0 -4px}
-  .entrar{width:100%;margin-top:24px;border:2px solid var(--cian);background:transparent;font-family:var(--display);font-size:16px;letter-spacing:.14em;text-transform:uppercase;color:var(--cian);padding:12px;cursor:pointer}
-  .entrar:hover{background:rgba(37,231,255,.12)}
+  .cerrojo h2{font-family:var(--script);font-size:28px;letter-spacing:.01em;text-transform:none;
+    color:#F4FFFA;text-shadow:var(--luzVerde);margin:24px 0 8px}
+  .cerrojo label{display:block;font-family:var(--script);font-size:15px;font-weight:400;
+    letter-spacing:.01em;color:#FFEAF4;text-shadow:0 0 9px rgba(255,46,136,.5);margin:18px 0 -2px}
   .error{font-size:13px;font-weight:700;color:var(--rojo);margin:14px 0 0;min-height:18px}
   .sugerida{font-family:"Courier New",monospace;font-size:16px;color:var(--neon);word-break:break-all;margin:12px 0 0;display:none;padding:10px;border:1px dashed var(--reja)}
-  .pie{font-size:12px;color:var(--tenue);line-height:1.5;margin:0 0 18px}
+  .pie{font-family:var(--script);font-size:14px;color:#DCD2EE;line-height:1.7;margin:0 0 20px;
+    text-shadow:0 0 8px rgba(162,75,255,.35)}
   
   /* ---------- portada ---------- */
   .portada{
@@ -186,27 +177,149 @@
     opacity:0;animation:asomar 1.6s ease 1.4s both;
   }
 
+
+  /* ---------- botones: carteles chicos ---------- */
+  .accion,.entrar,.sumar,.tenue,.salida,.x{
+    position:relative;cursor:pointer;
+    font-family:var(--script);font-weight:400;letter-spacing:.01em;text-transform:none;
+    border:2px solid var(--borde);border-radius:3px;
+    background:linear-gradient(180deg, rgba(30,16,54,.80) 0%, rgba(12,6,26,.92) 100%);
+    color:var(--letra);
+    text-shadow:0 0 2px rgba(255,255,255,.9), 0 0 9px var(--luz), 0 0 20px var(--luz);
+    box-shadow:
+      0 4px 0 rgba(6,3,14,.92),
+      0 6px 1px var(--borde),
+      0 11px 22px rgba(0,0,0,.5),
+      inset 0 0 22px rgba(162,75,255,.10),
+      inset 0 1px 0 rgba(237,232,255,.08);
+    transition:transform .12s ease, box-shadow .12s ease, border-color .2s ease, color .2s ease;
+  }
+  .accion:hover,.entrar:hover,.sumar:hover,.tenue:hover,.salida:hover,.x:hover{
+    color:#FFF8FD;
+    box-shadow:
+      0 4px 0 rgba(6,3,14,.92),
+      0 6px 2px var(--borde),
+      0 12px 26px rgba(0,0,0,.55),
+      0 0 22px var(--borde),
+      inset 0 0 26px rgba(162,75,255,.16),
+      inset 0 1px 0 rgba(237,232,255,.10);
+  }
+  .accion:active,.entrar:active,.sumar:active,.tenue:active,.salida:active,.x:active{
+    transform:translateY(4px);
+    box-shadow:
+      0 0 0 rgba(6,3,14,.92),
+      0 1px 6px rgba(0,0,0,.5),
+      inset 0 0 26px rgba(162,75,255,.18);
+  }
+
+  .accion{--luz:#FF2E88;--borde:rgba(255,46,136,.45);--letra:#FFF3FB;font-size:17px;padding:10px 18px}
+  .accion.cian{--luz:#25E7FF;--borde:rgba(37,231,255,.45)}
+  .entrar{--luz:#25E7FF;--borde:rgba(37,231,255,.45);--letra:#F2FDFF;
+    width:100%;margin-top:24px;font-size:20px;padding:13px}
+  .sumar{--luz:#A24BFF;--borde:rgba(162,75,255,.45);--letra:#F6F0FF;
+    width:100%;margin-top:8px;font-size:18px;padding:12px}
+  .tenue,.salida{--luz:rgba(255,46,136,.75);--borde:rgba(122,62,180,.45);--letra:#EFE6F8;
+    font-size:15px;padding:8px 14px}
+  .salida{position:fixed;top:12px;right:12px;z-index:5}
+  .x{--luz:rgba(143,130,201,.75);--borde:rgba(122,62,180,.4);--letra:#B9AFE0;
+    font-family:var(--body);font-weight:700;
+    flex:none;width:34px;height:34px;padding:0;font-size:17px;line-height:1;letter-spacing:0}
+  .x:hover{--luz:#FF5470;--borde:rgba(255,84,112,.55);--letra:#FFE6EA}
+  .peligro{--luz:rgba(255,84,112,.85);--borde:rgba(255,84,112,.45);--letra:#FFD9DF}
+
+  /* ---------- cartel de neón ---------- */
+  .cartel{
+    perspective:900px;display:flex;flex-direction:column;align-items:center;
+    width:100%;margin:0 auto;
+  }
+
   .marca{
     display:flex;align-items:center;justify-content:center;
-    width:100%;max-width:420px;position:relative;
+    transform:rotateX(11deg);transform-style:preserve-3d;
+    padding:16px 22px 18px;position:relative;
+    background:
+      linear-gradient(180deg, rgba(48,8,34,.82) 0%, rgba(16,5,20,.93) 100%);
+    border:2px solid rgba(255,53,168,.80);
+    border-radius:3px;
+    box-shadow:
+      0 7px 0 rgba(10,4,14,.92),
+      0 9px 2px rgba(255,53,168,.48),
+      0 22px 44px rgba(0,0,0,.62),
+      0 0 16px rgba(255,53,168,.60),
+      0 0 40px rgba(255,53,168,.32),
+      inset 0 0 38px rgba(255,53,168,.18),
+      inset 0 1px 0 rgba(255,190,225,.16);
   }
-  .marca span{
-    font-family:var(--body);font-weight:700;letter-spacing:.06em;
-    color:transparent;-webkit-text-stroke:2px #EDE8FF;
-    text-shadow:0 0 14px rgba(237,232,255,.55), 0 0 34px rgba(162,75,255,.35);
-    white-space:nowrap;line-height:1;
+  .marca::before{
+    content:"";position:absolute;inset:5px;border:1px solid rgba(255,53,168,.45);
+    border-radius:2px;pointer-events:none;
   }
-  .marca .pal{flex:1 1 0;font-size:min(9.5vw,42px)}
-  .marca .izq{text-align:right;padding-right:.14em;
-    opacity:0;animation:entraIzq .8s cubic-bezier(.2,.8,.25,1) 1.45s both}
-  .marca .der{text-align:left;padding-left:.14em;
-    opacity:0;animation:entraDer .8s cubic-bezier(.2,.8,.25,1) 1.45s both}
+
+  .tubo,.marca span,.reflejo span{
+    font-family:var(--body);font-weight:800;letter-spacing:.05em;
+    line-height:1;white-space:nowrap;
+  }
+  .marca .pal{
+    color:#FFF0F7;
+    text-shadow:
+      0 0 2px #fff,
+      0 0 7px #FFC2DE,
+      0 0 16px #FF2E88,
+      0 0 34px #FF2E88,
+      0 0 62px rgba(255,46,136,.7);
+  }
   .marca .signo{
-    flex:none;font-size:min(14vw,62px);
-    -webkit-text-stroke:2.6px #FF2E88;
-    text-shadow:0 0 18px rgba(255,46,136,.75), 0 0 46px rgba(255,46,136,.45);
-    animation:naceElSigno 2.35s cubic-bezier(.22,.9,.24,1) both;
+    position:relative;z-index:2;line-height:.48;
+    color:#EDFFF6;
+    text-shadow:
+      0 0 2px #fff,
+      0 0 8px #B6FFDC,
+      0 0 18px #3DFF9E,
+      0 0 38px #3DFF9E,
+      0 0 68px rgba(61,255,158,.75);
   }
+
+  /* soportes del cartel */
+  .soportes{display:flex;gap:44%;justify-content:center;width:100%;transform:rotateX(11deg)}
+  .soportes i{
+    display:block;width:3px;height:14px;border-radius:0 0 2px 2px;
+    background:linear-gradient(180deg, #FF2E88, rgba(255,46,136,0));
+    box-shadow:0 0 8px rgba(255,46,136,.85), 0 0 18px rgba(255,46,136,.45);
+  }
+
+  /* reflejo en el piso */
+  .reflejo{
+    overflow:visible;
+    display:flex;align-items:center;justify-content:center;
+    transform:rotateX(11deg) scaleY(-1);
+    opacity:.16;filter:blur(2px);margin-top:-6px;
+    -webkit-mask-image:linear-gradient(180deg, transparent 0%, #000 70%);
+    mask-image:linear-gradient(180deg, transparent 0%, #000 70%);
+    pointer-events:none;
+  }
+  .reflejo .pal{color:#FF2E88}
+  .reflejo .signo{color:#3DFF9E}
+
+  /* tamaños */
+  .cartel.grande{max-width:420px}
+  .cartel.grande .pal{font-size:min(8.4vw,38px)}
+  .cartel.grande .signo{font-size:min(17vw,76px);margin:0 .06em;line-height:.48}
+  .cartel.grande .reflejo .pal{font-size:min(8.4vw,38px)}
+  .cartel.grande .reflejo .signo{font-size:min(17vw,76px);margin:0 .06em;line-height:.48}
+
+  .cartel.chico{max-width:300px;margin-bottom:6px}
+  .cartel.chico .marca{padding:11px 16px 12px}
+  .cartel.chico .pal,.cartel.chico .reflejo .pal{font-size:min(6vw,24px)}
+  .cartel.chico .signo,.cartel.chico .reflejo .signo{font-size:min(12vw,48px);margin:0 .05em;line-height:.48}
+  .cartel.chico .soportes i{height:9px}
+
+  /* la animación de entrada solo en la portada */
+  .portada .marca .izq{opacity:0;animation:entraIzq .8s cubic-bezier(.2,.8,.25,1) 1.45s both}
+  .portada .marca .der{opacity:0;animation:entraDer .8s cubic-bezier(.2,.8,.25,1) 1.45s both}
+  .portada .marca .signo{animation:naceElSigno 2.35s cubic-bezier(.22,.9,.24,1) both}
+  .portada .soportes,.portada .reflejo{opacity:0;animation:asomar 1s ease 2.1s both}
+  .portada .reflejo{animation-name:asomarReflejo}
+  @keyframes asomarReflejo{from{opacity:0} to{opacity:.16}}
 
   @keyframes naceElSigno{
     0%  {opacity:0;transform:scale(.25)}
@@ -244,9 +357,9 @@
   .doble.solo .raya,.doble.solo .lado.der{display:none}
   .doble.solo .cifra{font-size:min(12vw,52px)}
   .titulo{
-    font-family:var(--display);font-size:24px;letter-spacing:.2em;text-transform:uppercase;
-    color:var(--tinta);text-align:center;margin:2px 0 6px;font-weight:400;
-    text-shadow:0 0 16px rgba(237,232,255,.45);
+    font-family:var(--script);font-size:34px;letter-spacing:.01em;text-transform:none;
+    color:#F4FFFA;text-align:center;margin:4px 0 10px;font-weight:400;
+    text-shadow:var(--luzVerde);
   }
   .doble .rosa{color:var(--magenta);text-shadow:0 0 22px rgba(255,46,136,.6),0 0 46px rgba(255,46,136,.25)}
   .doble .subcifra{display:block;font-size:11px;font-weight:700;letter-spacing:.16em;
@@ -255,9 +368,10 @@
   .reloj svg{width:100%;max-width:220px;display:block}
   .reloj .arco{transition:stroke-dashoffset 1.3s cubic-bezier(.2,.8,.2,1)}
   .balanza{margin-top:24px;border-top:1px solid var(--reja)}
-  .balanza .linea{display:flex;align-items:baseline;gap:12px;padding:11px 0;border-bottom:1px solid var(--reja);font-size:15px;color:var(--tenue)}
+  .balanza .linea{display:flex;align-items:baseline;gap:12px;padding:12px 0;border-bottom:1px solid var(--reja);
+    font-family:var(--script);font-size:18px;color:#EFE4F6;text-shadow:0 0 8px rgba(255,46,136,.35)}
   .balanza .linea b{margin-left:auto;font-family:var(--display);font-weight:400;font-size:20px;color:var(--tinta);font-variant-numeric:tabular-nums}
-  .balanza .suma{color:var(--tinta);font-weight:700}
+  .balanza .suma{color:#F4FFFA;text-shadow:var(--luzVerde)}
   .balanza .suma b{color:var(--magenta)}
   .barra{height:16px;background:var(--capa);border:1px solid var(--reja);position:relative;overflow:hidden;margin-top:26px}
   .barra i{position:absolute;top:0;bottom:0;left:0;width:0;background:linear-gradient(90deg,var(--magenta),var(--violeta) 60%,var(--cian));box-shadow:0 0 16px rgba(162,75,255,.6);transition:width .46s cubic-bezier(.2,.8,.2,1)}
@@ -274,14 +388,17 @@
   #tituloAuth, #pieAuth{display:none}
 
   @media (prefers-reduced-motion:reduce){
-    .marca .signo,.marca .izq,.marca .der,.portada .brasa,.cerrojo > *{
-      animation:none;opacity:1;transform:none}
+    .portada .marca .signo,.portada .marca .izq,.portada .marca .der,
+    .portada .brasa,.portada .soportes,.cerrojo > *{
+      animation:none;opacity:1}
+    .portada .reflejo{animation:none;opacity:.16}
   }
 
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
   .caja{border:2px solid var(--reja);padding:16px;margin-bottom:14px}
-  .caja h3{font-family:var(--display);font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--cian);margin:0 0 10px}
+  .caja h3{font-family:var(--script);font-size:20px;letter-spacing:.01em;text-transform:none;
+    color:#F4FFFA;text-shadow:var(--luzVerde);margin:0 0 12px}
   .codigo{font-family:"Courier New",monospace;font-size:30px;letter-spacing:.22em;color:var(--neon);text-shadow:0 0 14px rgba(61,255,158,.7);text-align:center;padding:14px;border:1px dashed var(--neon);margin:10px 0}
   .estado{position:fixed;top:0;left:0;right:0;z-index:7;text-align:center;font-size:12px;font-weight:700;letter-spacing:.1em;padding:7px;background:var(--rojo);color:var(--noche);display:none}
   .paso{display:flex;gap:10px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--reja);font-size:14px;line-height:1.45}
@@ -298,10 +415,16 @@
 
 <div class="portada" id="portada">
   <div class="brasa"></div>
-  <div class="marca">
-    <span class="pal izq">ECONO</span>
-    <span class="signo">$</span>
-    <span class="pal der">MÍO</span>
+  <div class="cartel grande">
+    <div class="marca">
+      <span class="pal izq">ECONO</span>
+      <span class="signo">$</span>
+      <span class="pal der">MÍO</span>
+    </div>
+    <div class="soportes"><i></i><i></i></div>
+    <div class="reflejo" aria-hidden="true">
+      <span class="pal">ECONO</span><span class="signo">$</span><span class="pal">MÍO</span>
+    </div>
   </div>
   <div class="rayas"></div>
 </div>
@@ -352,12 +475,12 @@
         <filter id="pHalo" x="-40%" y="-60%" width="180%" height="220%"><feGaussianBlur stdDeviation="6"/></filter>
         <filter id="pNucleo" x="-40%" y="-60%" width="180%" height="220%"><feGaussianBlur stdDeviation="1.6"/></filter>
       </defs>
-      <g font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="40" font-weight="700" letter-spacing="5" text-anchor="middle" fill="none" stroke-linejoin="round">
+      <g font-family="Inter,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="40" font-weight="700" letter-spacing="5" text-anchor="middle" fill="none" stroke-linejoin="round">
         <text x="200" y="66" stroke-width="9" opacity=".45" filter="url(#pHalo)"><tspan stroke="#EDE8FF">ECONO</tspan><tspan dx="13" font-size="58" stroke="#FF2E88">$</tspan><tspan dx="13" stroke="#EDE8FF">MÍO</tspan></text>
         <text x="200" y="66" stroke-width="5" opacity=".75" filter="url(#pNucleo)"><tspan stroke="#EDE8FF">ECONO</tspan><tspan dx="13" font-size="58" stroke="#FF2E88">$</tspan><tspan dx="13" stroke="#EDE8FF">MÍO</tspan></text>
         <text x="200" y="66" stroke-width="2.4"><tspan stroke="#EDE8FF">ECONO</tspan><tspan dx="13" font-size="58" stroke="#FF2E88">$</tspan><tspan dx="13" stroke="#EDE8FF">MÍO</tspan></text>
       </g>
-      <text x="200" y="96" text-anchor="middle" font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="5" fill="#25E7FF">CUENTAS DE LOS DOS</text>
+      <text x="200" y="96" text-anchor="middle" font-family="Inter,'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="5" fill="#25E7FF">CUENTAS DE LOS DOS</text>
     </svg>
     <h2 id="tituloAuth">Entrar</h2>
     <p class="pie" id="pieAuth">Cada uno con su propia cuenta, en su propio teléfono.</p>
@@ -385,7 +508,7 @@
       <h3>Empezar de cero</h3>
       <label for="miNombreA">CÓMO TE LLAMÁS</label>
       <input class="campo" id="miNombreA" placeholder="Ana" />
-      <button class="accion cian" id="botonCrearHogar" style="width:100%;margin-top:16px;padding:12px">Crear la casa</button>
+      <button class="accion cian" id="botonCrearHogar" style="width:100%;margin-top:18px">Crear la casa</button>
     </div>
 
     <div class="caja">
@@ -394,7 +517,7 @@
       <input class="campo" id="codigoHogar" placeholder="A7K2M9" autocapitalize="characters" spellcheck="false" style="letter-spacing:.2em" />
       <label for="miNombreB">CÓMO TE LLAMÁS</label>
       <input class="campo" id="miNombreB" placeholder="Juan" />
-      <button class="accion" id="botonUnirme" style="width:100%;margin-top:16px;padding:12px">Sumarme</button>
+      <button class="accion" id="botonUnirme" style="width:100%;margin-top:18px">Sumarme</button>
     </div>
 
     <p class="error" id="errorHogar"></p>
@@ -407,17 +530,17 @@
   <button class="salida" id="salir">Cerrar sesión</button>
 
 
-  <svg viewBox="0 0 400 96" role="img" aria-label="Econo $ Mío" style="width:100%;max-width:280px;display:block;margin:0 auto;overflow:visible">
-    <defs>
-      <filter id="hHalo" x="-40%" y="-60%" width="180%" height="220%"><feGaussianBlur stdDeviation="5"/></filter>
-      <filter id="hNucleo" x="-40%" y="-60%" width="180%" height="220%"><feGaussianBlur stdDeviation="1.5"/></filter>
-    </defs>
-    <g font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="38" font-weight="700" letter-spacing="5" text-anchor="middle" fill="none" stroke-linejoin="round">
-      <text x="200" y="60" stroke-width="8" opacity=".45" filter="url(#hHalo)"><tspan stroke="#EDE8FF">ECONO</tspan><tspan dx="12" font-size="54" stroke="#FF2E88">$</tspan><tspan dx="12" stroke="#EDE8FF">MÍO</tspan></text>
-      <text x="200" y="60" stroke-width="4.6" opacity=".75" filter="url(#hNucleo)"><tspan stroke="#EDE8FF">ECONO</tspan><tspan dx="12" font-size="54" stroke="#FF2E88">$</tspan><tspan dx="12" stroke="#EDE8FF">MÍO</tspan></text>
-      <text x="200" y="60" stroke-width="2.2"><tspan stroke="#EDE8FF">ECONO</tspan><tspan dx="12" font-size="54" stroke="#FF2E88">$</tspan><tspan dx="12" stroke="#EDE8FF">MÍO</tspan></text>
-    </g>
-  </svg>
+  <div class="cartel chico">
+    <div class="marca">
+      <span class="pal izq">ECONO</span>
+      <span class="signo">$</span>
+      <span class="pal der">MÍO</span>
+    </div>
+    <div class="soportes"><i></i><i></i></div>
+    <div class="reflejo" aria-hidden="true">
+      <span class="pal">ECONO</span><span class="signo">$</span><span class="pal">MÍO</span>
+    </div>
+  </div>
 
   <!-- ---------- BALANCE ---------- -->
   <section class="panel vivo" id="panelBalance">
@@ -470,7 +593,7 @@
       <span style="flex:1.5 1 70px"></span>
       <span class="nota" style="flex:1 1 50px;text-align:right" id="colMoneda"></span>
       <span class="nota" style="flex:1 1 50px;text-align:right;color:var(--neon)" id="colMoneda2"></span>
-      <span style="width:20px"></span>
+      <span style="width:34px"></span>
     </div>
     <div id="ingresos"></div>
     <button class="sumar" id="masIngreso">+ Agregar ingreso</button>
@@ -518,7 +641,7 @@
     <div class="cabecera"><span class="rotulo">La cuenta</span></div>
     <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
       <button class="tenue" id="diagDesdeApp">Probar la conexión</button>
-      <button class="tenue" id="borrar" style="margin-left:auto;color:var(--rojo)">Borrar todo</button>
+      <button class="tenue peligro" id="borrar" style="margin-left:auto">Borrar todo</button>
     </div>
     <p class="nota" id="huella" style="margin-top:16px;line-height:1.5;font-size:11px"></p>
   </section>
@@ -801,25 +924,25 @@
 
     // el texto del centro
     var num = nodo("text", { x:110, y:98, "text-anchor":"middle",
-      fill:"#3DFF9E", "font-family":"Impact,'Arial Black',sans-serif", "font-size":46,
+      fill:"#3DFF9E", "font-family":"Anton,Impact,sans-serif", "font-size":46,
       style:"filter:drop-shadow(0 0 10px rgba(61,255,158,.7))" });
     num.textContent = faltan;
     svg.appendChild(num);
 
     var uni = nodo("text", { x:110, y:120, "text-anchor":"middle", fill:"#EDE8FF",
-      "font-family":"'Helvetica Neue',Arial,sans-serif", "font-size":13,
+      "font-family":"Inter,'Helvetica Neue',Arial,sans-serif", "font-size":13,
       "font-weight":700, "letter-spacing":3 });
     uni.textContent = faltan === 1 ? "DÍA" : "DÍAS";
     svg.appendChild(uni);
 
     var l1 = nodo("text", { x:110, y:140, "text-anchor":"middle", fill:"#8F82C9",
-      "font-family":"'Helvetica Neue',Arial,sans-serif", "font-size":10,
+      "font-family":"Inter,'Helvetica Neue',Arial,sans-serif", "font-size":10,
       "font-weight":700, "letter-spacing":2 });
     l1.textContent = "PARA TERMINAR";
     svg.appendChild(l1);
 
     var l2 = nodo("text", { x:110, y:153, "text-anchor":"middle", fill:"#8F82C9",
-      "font-family":"'Helvetica Neue',Arial,sans-serif", "font-size":10,
+      "font-family":"Inter,'Helvetica Neue',Arial,sans-serif", "font-size":10,
       "font-weight":700, "letter-spacing":2 });
     l2.textContent = "EL MES";
     svg.appendChild(l2);
