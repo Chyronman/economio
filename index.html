@@ -182,7 +182,7 @@
 
 
   /* ---------- botones: carteles chicos ---------- */
-  .accion,.entrar,.sumar,.tenue,.salida,.x{
+  .accion,.entrar,.sumar,.tenue,.salida,.x,.engranaje{
     position:relative;cursor:pointer;
     font-family:var(--script);font-style:italic;font-weight:700;letter-spacing:.04em;text-transform:none;
     border:2px solid var(--borde);border-radius:3px;
@@ -197,7 +197,7 @@
       inset 0 1px 0 rgba(237,232,255,.08);
     transition:transform .12s ease, box-shadow .12s ease, border-color .2s ease, color .2s ease;
   }
-  .accion:hover,.entrar:hover,.sumar:hover,.tenue:hover,.salida:hover,.x:hover{
+  .accion:hover,.entrar:hover,.sumar:hover,.tenue:hover,.salida:hover,.x:hover,.engranaje:hover{
     color:#FFF8FD;
     box-shadow:
       0 4px 0 rgba(6,3,14,.92),
@@ -207,7 +207,7 @@
       inset 0 0 26px rgba(162,75,255,.16),
       inset 0 1px 0 rgba(237,232,255,.10);
   }
-  .accion:active,.entrar:active,.sumar:active,.tenue:active,.salida:active,.x:active{
+  .accion:active,.entrar:active,.sumar:active,.tenue:active,.salida:active,.x:active,.engranaje:active{
     transform:translateY(4px);
     box-shadow:
       0 0 0 rgba(6,3,14,.92),
@@ -224,6 +224,13 @@
   .tenue,.salida{--luz:rgba(255,46,136,.75);--borde:rgba(122,62,180,.45);--letra:#EFE6F8;
     font-size:13px;padding:9px 14px}
   .salida{position:fixed;top:12px;right:12px;z-index:5}
+  .engranaje{
+    position:fixed;top:12px;left:12px;z-index:5;
+    width:42px;height:42px;padding:0;display:flex;align-items:center;justify-content:center;
+    --luz:rgba(255,46,136,.75);--borde:rgba(122,62,180,.45);--letra:#EFE6F8;
+  }
+  .engranaje svg{width:21px;height:21px;filter:drop-shadow(0 0 6px var(--luz))}
+  .engranaje.activo{--luz:#3DFF9E;--borde:rgba(61,255,158,.6);--letra:#EAFFF4}
   .x{--luz:rgba(143,130,201,.75);--borde:rgba(122,62,180,.4);--letra:#B9AFE0;
     font-family:var(--body);font-weight:700;
     flex:none;width:34px;height:34px;padding:0;font-size:17px;line-height:1;letter-spacing:0}
@@ -370,6 +377,8 @@
   .reloj{display:flex;justify-content:center;margin:10px 0 26px}
   .reloj svg{width:100%;max-width:220px;display:block}
   .reloj .arco{transition:stroke-dashoffset 1.3s cubic-bezier(.2,.8,.2,1)}
+  .tanque{display:flex;justify-content:center;margin:30px 0 6px}
+  .tanque svg{width:100%;max-width:170px;display:block}
   .balanza{margin-top:24px;border-top:1px solid var(--reja)}
   .balanza .linea{display:flex;align-items:baseline;gap:12px;padding:12px 0;border-bottom:1px solid var(--reja);
     font-family:var(--script);font-style:italic;font-weight:600;font-size:16px;letter-spacing:.03em;color:#EFE4F6;
@@ -531,6 +540,13 @@
 
 <div class="hoja" id="appHoja" style="display:none">
 
+  <button class="engranaje" id="btnAjustes" aria-label="Ajustes">
+    <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+      <g fill="currentColor" stroke="none"><rect x="11" y="0.6" width="2" height="4.2" rx="0.6" transform="rotate(0 12 12)"/><rect x="11" y="0.6" width="2" height="4.2" rx="0.6" transform="rotate(45 12 12)"/><rect x="11" y="0.6" width="2" height="4.2" rx="0.6" transform="rotate(90 12 12)"/><rect x="11" y="0.6" width="2" height="4.2" rx="0.6" transform="rotate(135 12 12)"/><rect x="11" y="0.6" width="2" height="4.2" rx="0.6" transform="rotate(180 12 12)"/><rect x="11" y="0.6" width="2" height="4.2" rx="0.6" transform="rotate(225 12 12)"/><rect x="11" y="0.6" width="2" height="4.2" rx="0.6" transform="rotate(270 12 12)"/><rect x="11" y="0.6" width="2" height="4.2" rx="0.6" transform="rotate(315 12 12)"/></g>
+      <circle cx="12" cy="12" r="6.6" fill="none"/>
+      <circle cx="12" cy="12" r="2.5" fill="none"/>
+    </svg>
+  </button>
   <button class="salida" id="salir">Cerrar sesión</button>
 
 
@@ -559,7 +575,7 @@
       <div class="linea suma"><span>Sale en total</span><b id="totalSale">$ 0</b></div>
     </div>
 
-    <div id="barraBal" class="barra" style="display:none"><i></i></div>
+    <div class="tanque" id="tanque"></div>
     <div id="piesBal" class="pies" style="display:none">
       <span class="nota" id="piePorcGasto"></span>
       <span class="nota" id="piePorcLibre" style="color:var(--neon)"></span>
@@ -656,7 +672,6 @@
   <button data-panel="panelIngresos">Ingresos</button>
   <button data-panel="panelGastos">Gastos</button>
   <button data-panel="panelBalance" class="viva">Balance</button>
-  <button data-panel="panelAjustes">Ajustes</button>
 </nav>
 
 
@@ -969,6 +984,100 @@
     });
   }
 
+  /* del verde al rojo según cuánto queda */
+  function tonoNivel(f){
+    var a, b, t;
+    if(f >= 0.5){ a=[255,201,60]; b=[61,255,158];  t=(f-0.5)/0.5; }
+    else        { a=[255,84,112]; b=[255,201,60];  t=f/0.5; }
+    return "rgb(" + a.map(function(v,i){ return Math.round(v + (b[i]-v)*t); }).join(",") + ")";
+  }
+
+  function pintarTanque(r){
+    var caja = $("tanque"); limpiar(caja);
+    if(r.entra <= 0){ caja.style.display="none"; return; }
+    caja.style.display="flex";
+
+    var frac = Math.max(0, Math.min(1, r.queda / r.entra));
+    var color = tonoNivel(frac);
+    var pct = Math.round(frac*100);
+
+    var NS="http://www.w3.org/2000/svg";
+    function n(t,a){ var e=document.createElementNS(NS,t); for(var k in a) e.setAttribute(k,a[k]); return e; }
+
+    var ARR=34, ABA=196, RX=42, RY=14;          // arriba, abajo, radios
+    var nivel = ABA - frac*(ABA-ARR);
+
+    var svg = n("svg",{viewBox:"0 0 140 226", role:"img",
+      "aria-label":"Queda el "+pct+" por ciento de lo que entra"});
+
+    var defs = n("defs",{});
+    var cp = n("clipPath",{id:"dentroTubo"});
+    cp.appendChild(n("path",{d:"M28,"+ARR+" V"+ABA+" A"+RX+","+RY+" 0 0 0 112,"+ABA+" V"+ARR+" Z"}));
+    cp.appendChild(n("ellipse",{cx:70,cy:ARR,rx:RX,ry:RY}));
+    defs.appendChild(cp);
+
+    var vidrio = n("linearGradient",{id:"vidrio",x1:"0",y1:"0",x2:"1",y2:"0"});
+    [["0%","rgba(237,232,255,.20)"],["18%","rgba(237,232,255,.05)"],
+     ["48%","rgba(237,232,255,.02)"],["78%","rgba(237,232,255,.10)"],
+     ["100%","rgba(237,232,255,.22)"]].forEach(function(p){
+      vidrio.appendChild(n("stop",{offset:p[0],"stop-color":p[1]}));
+    });
+    defs.appendChild(vidrio);
+
+    var brillo = n("filter",{id:"brilloLiq",x:"-60%",y:"-60%",width:"220%",height:"220%"});
+    brillo.appendChild(n("feGaussianBlur",{stdDeviation:"7",result:"b"}));
+    var mg = n("feMerge",{});
+    mg.appendChild(n("feMergeNode",{in:"b"})); mg.appendChild(n("feMergeNode",{in:"SourceGraphic"}));
+    brillo.appendChild(mg);
+    defs.appendChild(brillo);
+    svg.appendChild(defs);
+
+    // fondo del tubo
+    svg.appendChild(n("path",{d:"M28,"+ARR+" V"+ABA+" A"+RX+","+RY+" 0 0 0 112,"+ABA+" V"+ARR,
+      fill:"rgba(10,5,24,.55)"}));
+
+    // el líquido
+    var liq = n("g",{"clip-path":"url(#dentroTubo)"});
+    liq.appendChild(n("rect",{x:28,y:nivel,width:84,height:(ABA+RY+2-nivel),fill:color,opacity:".72"}));
+    liq.appendChild(n("ellipse",{cx:70,cy:ABA,rx:RX,ry:RY,fill:color,opacity:".72"}));
+    svg.appendChild(liq);
+
+    // superficie
+    if(frac > 0.01 && frac < 0.995){
+      svg.appendChild(n("ellipse",{cx:70,cy:nivel,rx:RX,ry:RY,fill:color,opacity:".95",
+        filter:"url(#brilloLiq)"}));
+      svg.appendChild(n("ellipse",{cx:70,cy:nivel,rx:RX,ry:RY,fill:"none",
+        stroke:"#FFFFFF","stroke-width":"1.2",opacity:".55"}));
+    }
+
+    // vidrio, reflejo y bordes
+    svg.appendChild(n("path",{d:"M28,"+ARR+" V"+ABA+" A"+RX+","+RY+" 0 0 0 112,"+ABA+" V"+ARR,
+      fill:"url(#vidrio)"}));
+    svg.appendChild(n("rect",{x:39,y:ARR+10,width:7,height:ABA-ARR-26,rx:3.5,
+      fill:"rgba(255,255,255,.14)"}));
+    svg.appendChild(n("path",{d:"M28,"+ARR+" V"+ABA+" A"+RX+","+RY+" 0 0 0 112,"+ABA+" V"+ARR,
+      fill:"none",stroke:"rgba(237,232,255,.35)","stroke-width":"2"}));
+    svg.appendChild(n("ellipse",{cx:70,cy:ARR,rx:RX,ry:RY,fill:"none",
+      stroke:"rgba(237,232,255,.5)","stroke-width":"2"}));
+    svg.appendChild(n("ellipse",{cx:70,cy:ARR,rx:RX-6,ry:RY-4,fill:"none",
+      stroke:"rgba(237,232,255,.18)","stroke-width":"1"}));
+
+    // el número
+    var t = n("text",{x:70,y:nivel>110?86:ABA-24,"text-anchor":"middle",
+      "font-family":"Anton,Impact,sans-serif","font-size":"34",fill:"#FFFFFF",
+      style:"filter:drop-shadow(0 0 10px "+color+")"});
+    t.textContent = pct + "%";
+    svg.appendChild(t);
+
+    var sub = n("text",{x:70,y:nivel>110?104:ABA-6,"text-anchor":"middle",
+      "font-family":"'Chakra Petch',Inter,sans-serif","font-size":"11","font-weight":"700",
+      "font-style":"italic",fill:"rgba(237,232,255,.75)","letter-spacing":"1"});
+    sub.textContent = "disponible";
+    svg.appendChild(sub);
+
+    caja.appendChild(svg);
+  }
+
   function pintarBalance(){
     var r = resumen();
 
@@ -995,18 +1104,18 @@
     $("totalVarBal").textContent   = fmt(r.vari);
     $("totalSale").textContent     = fmt(r.sale);
 
-    var barra=$("barraBal"), pies=$("piesBal");
+    var pies=$("piesBal");
     if(r.entra>0){
       var usado = Math.min(100, Math.max(0,(r.sale/r.entra)*100));
-      barra.style.display="block"; pies.style.display="flex";
-      barra.className = "barra" + (r.sale/r.entra>1.005 ? " excedido" : "");
-      barra.querySelector("i").style.width = usado+"%";
+      pies.style.display="flex";
       $("piePorcGasto").textContent = "GASTADO "+Math.round(usado)+"%";
       $("piePorcLibre").textContent = "LIBRE "+Math.max(0,100-Math.round(usado))+"%";
-    } else { barra.style.display="none"; pies.style.display="none"; }
+    } else { pies.style.display="none"; }
 
     $("totalFijos").textContent  = fmt(r.fijo);
     $("totalExtras").textContent = fmt(r.vari);
+
+    pintarTanque(r);
 
     var caja=$("desglose"); limpiar(caja);
     if(r.sale<=0){
@@ -1164,8 +1273,21 @@
   $("actualizar").addEventListener("click",traerCotizacion);
   $("moneda").addEventListener("input",function(){ d.moneda=$("moneda").value; refrescarIngresos(); });
   $("moneda2").addEventListener("input",function(){ d.moneda2=$("moneda2").value; refrescarIngresos(); });
+  function apagarPestanas(){
+    Array.prototype.forEach.call(document.querySelectorAll(".pestanas button"),function(o){ o.classList.remove("viva"); });
+    Array.prototype.forEach.call(document.querySelectorAll(".panel"),function(p){ p.classList.remove("vivo"); });
+  }
+
+  $("btnAjustes").addEventListener("click",function(){
+    apagarPestanas();
+    $("panelAjustes").classList.add("vivo");
+    $("btnAjustes").classList.add("activo");
+    window.scrollTo(0,0);
+  });
+
   Array.prototype.forEach.call(document.querySelectorAll(".pestanas button"),function(b){
     b.addEventListener("click",function(){
+      $("btnAjustes").classList.remove("activo");
       Array.prototype.forEach.call(document.querySelectorAll(".pestanas button"),function(o){ o.classList.remove("viva"); });
       Array.prototype.forEach.call(document.querySelectorAll(".panel"),function(p){ p.classList.remove("vivo"); });
       b.classList.add("viva");
