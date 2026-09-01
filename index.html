@@ -374,18 +374,10 @@
   .doble .rosa{color:var(--magenta);text-shadow:0 0 22px rgba(255,46,136,.6),0 0 46px rgba(255,46,136,.25)}
   .doble .subcifra{display:block;font-size:11px;font-weight:700;letter-spacing:.16em;
     text-transform:uppercase;color:var(--tenue);margin-top:6px}
-  .reloj{display:flex;justify-content:center;margin:10px 0 26px}
-  .reloj svg{width:100%;max-width:220px;display:block}
-  .reloj .arco{transition:stroke-dashoffset 1.3s cubic-bezier(.2,.8,.2,1)}
-  .tanque{display:flex;justify-content:center;margin:30px 0 6px}
+  .tanques{display:flex;gap:18px;justify-content:center;align-items:stretch;margin:28px 0 10px}
+  .tanque{flex:1;display:flex;justify-content:center;min-width:0}
+  .tanque.delgado{flex:0 0 54px}
   .tanque svg{width:100%;max-width:170px;display:block}
-  .balanza{margin-top:24px;border-top:1px solid var(--reja)}
-  .balanza .linea{display:flex;align-items:baseline;gap:12px;padding:12px 0;border-bottom:1px solid var(--reja);
-    font-family:var(--script);font-style:italic;font-weight:600;font-size:16px;letter-spacing:.03em;color:#EFE4F6;
-    text-shadow:0 0 8px rgba(255,46,136,.32)}
-  .balanza .linea b{margin-left:auto;font-family:var(--display);font-weight:400;font-size:20px;color:var(--tinta);font-variant-numeric:tabular-nums}
-  .balanza .suma{color:#F4FFFA;text-shadow:var(--luzVerde)}
-  .balanza .suma b{color:var(--magenta)}
   .barra{height:16px;background:var(--capa);border:1px solid var(--reja);position:relative;overflow:hidden;margin-top:26px}
   .barra i{position:absolute;top:0;bottom:0;left:0;width:0;background:linear-gradient(90deg,var(--magenta),var(--violeta) 60%,var(--cian));box-shadow:0 0 16px rgba(162,75,255,.6);transition:width .46s cubic-bezier(.2,.8,.2,1)}
   .barra.excedido i{background:linear-gradient(90deg,var(--rojo),var(--magenta))}
@@ -566,19 +558,9 @@
   <section class="panel vivo" id="panelBalance">
     <h2 class="titulo">Balance</h2>
 
-    <div class="reloj" id="reloj"></div>
-
-    <div class="balanza">
-      <div class="linea"><span>Entra</span><b id="totalEntra">$ 0</b></div>
-      <div class="linea"><span>Gastos fijos</span><b id="totalFijoBal">$ 0</b></div>
-      <div class="linea"><span>Otros gastos</span><b id="totalVarBal">$ 0</b></div>
-      <div class="linea suma"><span>Sale en total</span><b id="totalSale">$ 0</b></div>
-    </div>
-
-    <div class="tanque" id="tanque"></div>
-    <div id="piesBal" class="pies" style="display:none">
-      <span class="nota" id="piePorcGasto"></span>
-      <span class="nota" id="piePorcLibre" style="color:var(--neon)"></span>
+    <div class="tanques">
+      <div class="tanque" id="tanque"></div>
+      <div class="tanque delgado" id="tanqueDias"></div>
     </div>
 
     <div class="separador"></div>
@@ -907,83 +889,6 @@
              fijo:fijo, vari:extra, sale:fijo+extra, queda:entra-fijo-extra };
   }
 
-  /* ---------- cuánto falta para fin de mes ---------- */
-  function pintarDias(){
-    var caja = $("reloj"); limpiar(caja);
-
-    var h = new Date();
-    var total   = new Date(h.getFullYear(), h.getMonth()+1, 0).getDate();
-    var pasados = h.getDate();
-    var faltan  = Math.max(0, total - pasados);
-    var frac    = faltan / total;
-
-    var NS = "http://www.w3.org/2000/svg";
-    function nodo(t, attrs){
-      var n = document.createElementNS(NS, t);
-      for(var k in attrs) n.setAttribute(k, attrs[k]);
-      return n;
-    }
-
-    var R = 88, GRUESO = 18, circ = 2*Math.PI*R;
-    var svg = nodo("svg", { viewBox:"0 0 220 220", role:"img",
-      "aria-label": faltan + " días para terminar el mes" });
-
-    // los días que ya pasaron
-    svg.appendChild(nodo("circle", { cx:110, cy:110, r:R, fill:"none",
-      stroke:"#2A1B52", "stroke-width":GRUESO }));
-
-    // los que faltan
-    var arco = nodo("circle", { cx:110, cy:110, r:R, fill:"none",
-      stroke:"#3DFF9E", "stroke-width":GRUESO, "stroke-linecap":"butt",
-      "stroke-dasharray": circ, "stroke-dashoffset": circ,
-      transform:"rotate(-90 110 110)",
-      style:"filter:drop-shadow(0 0 8px rgba(61,255,158,.8))" });
-    arco.setAttribute("class","arco");
-    svg.appendChild(arco);
-
-    // el texto del centro
-    var num = nodo("text", { x:110, y:98, "text-anchor":"middle",
-      fill:"#3DFF9E", "font-family":"Anton,Impact,sans-serif", "font-size":46,
-      style:"filter:drop-shadow(0 0 10px rgba(61,255,158,.7))" });
-    num.textContent = faltan;
-    svg.appendChild(num);
-
-    var uni = nodo("text", { x:110, y:120, "text-anchor":"middle", fill:"#EDE8FF",
-      "font-family":"Inter,'Helvetica Neue',Arial,sans-serif", "font-size":13,
-      "font-weight":700, "letter-spacing":3 });
-    uni.textContent = faltan === 1 ? "DÍA" : "DÍAS";
-    svg.appendChild(uni);
-
-    var l1 = nodo("text", { x:110, y:140, "text-anchor":"middle", fill:"#8F82C9",
-      "font-family":"Inter,'Helvetica Neue',Arial,sans-serif", "font-size":10,
-      "font-weight":700, "letter-spacing":2 });
-    l1.textContent = "PARA TERMINAR";
-    svg.appendChild(l1);
-
-    var l2 = nodo("text", { x:110, y:153, "text-anchor":"middle", fill:"#8F82C9",
-      "font-family":"Inter,'Helvetica Neue',Arial,sans-serif", "font-size":10,
-      "font-weight":700, "letter-spacing":2 });
-    l2.textContent = "EL MES";
-    svg.appendChild(l2);
-
-    if(faltan === 0){
-      num.textContent = "HOY";
-      num.setAttribute("font-size", 34);
-      uni.textContent = "TERMINA";
-      l1.textContent = "EL MES";
-      l2.textContent = "";
-    }
-
-    caja.appendChild(svg);
-
-    // el arco se dibuja solo, después de entrar en pantalla
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        arco.setAttribute("stroke-dashoffset", circ*(1-frac));
-      });
-    });
-  }
-
   /* del verde al rojo según cuánto queda */
   function tonoNivel(f){
     var a, b, t;
@@ -992,39 +897,42 @@
     return "rgb(" + a.map(function(v,i){ return Math.round(v + (b[i]-v)*t); }).join(",") + ")";
   }
 
-  function pintarTanque(r){
-    var caja = $("tanque"); limpiar(caja);
-    if(r.entra <= 0){ caja.style.display="none"; return; }
-    caja.style.display="flex";
-
-    var frac = Math.max(0, Math.min(1, r.queda / r.entra));
-    var color = tonoNivel(frac);
-    var pct = Math.round(frac*100);
+  function cilindro(caja, frac, color, grande, chico, med){
+    limpiar(caja);
+    frac = Math.max(0, Math.min(1, frac));
+    med = med || {};
+    var W   = med.W   || 176;   // ancho del lienzo
+    var RX  = med.RX  || 68;    // radio horizontal
+    var RY  = med.RY  || 20;    // radio vertical de las elipses
+    var ARR = med.ARR || 40;
+    var ABA = med.ABA || 198;
+    var ALTO= med.ALTO|| 230;
+    var CX  = W/2, x0 = CX-RX, x1 = CX+RX;
 
     var NS="http://www.w3.org/2000/svg";
     function n(t,a){ var e=document.createElementNS(NS,t); for(var k in a) e.setAttribute(k,a[k]); return e; }
 
-    var ARR=34, ABA=196, RX=42, RY=14;          // arriba, abajo, radios
+    var id = caja.id;
     var nivel = ABA - frac*(ABA-ARR);
+    var cuerpo = "M"+x0+","+ARR+" V"+ABA+" A"+RX+","+RY+" 0 0 0 "+x1+","+ABA+" V"+ARR;
 
-    var svg = n("svg",{viewBox:"0 0 140 226", role:"img",
-      "aria-label":"Queda el "+pct+" por ciento de lo que entra"});
+    var svg = n("svg",{viewBox:"0 0 "+W+" "+ALTO, role:"img", "aria-label":grande+" "+chico});
 
     var defs = n("defs",{});
-    var cp = n("clipPath",{id:"dentroTubo"});
-    cp.appendChild(n("path",{d:"M28,"+ARR+" V"+ABA+" A"+RX+","+RY+" 0 0 0 112,"+ABA+" V"+ARR+" Z"}));
-    cp.appendChild(n("ellipse",{cx:70,cy:ARR,rx:RX,ry:RY}));
+    var cp = n("clipPath",{id:"dentro-"+id});
+    cp.appendChild(n("path",{d:cuerpo+" Z"}));
+    cp.appendChild(n("ellipse",{cx:CX,cy:ARR,rx:RX,ry:RY}));
     defs.appendChild(cp);
 
-    var vidrio = n("linearGradient",{id:"vidrio",x1:"0",y1:"0",x2:"1",y2:"0"});
-    [["0%","rgba(237,232,255,.20)"],["18%","rgba(237,232,255,.05)"],
+    var vidrio = n("linearGradient",{id:"vidrio-"+id,x1:"0",y1:"0",x2:"1",y2:"0"});
+    [["0%","rgba(237,232,255,.22)"],["18%","rgba(237,232,255,.05)"],
      ["48%","rgba(237,232,255,.02)"],["78%","rgba(237,232,255,.10)"],
-     ["100%","rgba(237,232,255,.22)"]].forEach(function(p){
+     ["100%","rgba(237,232,255,.24)"]].forEach(function(p){
       vidrio.appendChild(n("stop",{offset:p[0],"stop-color":p[1]}));
     });
     defs.appendChild(vidrio);
 
-    var brillo = n("filter",{id:"brilloLiq",x:"-60%",y:"-60%",width:"220%",height:"220%"});
+    var brillo = n("filter",{id:"halo-"+id,x:"-60%",y:"-60%",width:"220%",height:"220%"});
     brillo.appendChild(n("feGaussianBlur",{stdDeviation:"7",result:"b"}));
     var mg = n("feMerge",{});
     mg.appendChild(n("feMergeNode",{in:"b"})); mg.appendChild(n("feMergeNode",{in:"SourceGraphic"}));
@@ -1032,50 +940,74 @@
     defs.appendChild(brillo);
     svg.appendChild(defs);
 
-    // fondo del tubo
-    svg.appendChild(n("path",{d:"M28,"+ARR+" V"+ABA+" A"+RX+","+RY+" 0 0 0 112,"+ABA+" V"+ARR,
-      fill:"rgba(10,5,24,.55)"}));
+    svg.appendChild(n("path",{d:cuerpo, fill:"rgba(10,5,24,.55)"}));
 
-    // el líquido
-    var liq = n("g",{"clip-path":"url(#dentroTubo)"});
-    liq.appendChild(n("rect",{x:28,y:nivel,width:84,height:(ABA+RY+2-nivel),fill:color,opacity:".72"}));
-    liq.appendChild(n("ellipse",{cx:70,cy:ABA,rx:RX,ry:RY,fill:color,opacity:".72"}));
+    var liq = n("g",{"clip-path":"url(#dentro-"+id+")"});
+    liq.appendChild(n("rect",{x:x0,y:nivel,width:RX*2,height:(ABA+RY+2-nivel),fill:color,opacity:".72"}));
+    liq.appendChild(n("ellipse",{cx:CX,cy:ABA,rx:RX,ry:RY,fill:color,opacity:".72"}));
     svg.appendChild(liq);
 
-    // superficie
     if(frac > 0.01 && frac < 0.995){
-      svg.appendChild(n("ellipse",{cx:70,cy:nivel,rx:RX,ry:RY,fill:color,opacity:".95",
-        filter:"url(#brilloLiq)"}));
-      svg.appendChild(n("ellipse",{cx:70,cy:nivel,rx:RX,ry:RY,fill:"none",
+      svg.appendChild(n("ellipse",{cx:CX,cy:nivel,rx:RX,ry:RY,fill:color,opacity:".95",
+        filter:"url(#halo-"+id+")"}));
+      svg.appendChild(n("ellipse",{cx:CX,cy:nivel,rx:RX,ry:RY,fill:"none",
         stroke:"#FFFFFF","stroke-width":"1.2",opacity:".55"}));
     }
 
-    // vidrio, reflejo y bordes
-    svg.appendChild(n("path",{d:"M28,"+ARR+" V"+ABA+" A"+RX+","+RY+" 0 0 0 112,"+ABA+" V"+ARR,
-      fill:"url(#vidrio)"}));
-    svg.appendChild(n("rect",{x:39,y:ARR+10,width:7,height:ABA-ARR-26,rx:3.5,
-      fill:"rgba(255,255,255,.14)"}));
-    svg.appendChild(n("path",{d:"M28,"+ARR+" V"+ABA+" A"+RX+","+RY+" 0 0 0 112,"+ABA+" V"+ARR,
-      fill:"none",stroke:"rgba(237,232,255,.35)","stroke-width":"2"}));
-    svg.appendChild(n("ellipse",{cx:70,cy:ARR,rx:RX,ry:RY,fill:"none",
+    svg.appendChild(n("path",{d:cuerpo, fill:"url(#vidrio-"+id+")"}));
+    svg.appendChild(n("rect",{x:x0+11,y:ARR+12,width:Math.max(4,RX*0.13),height:ABA-ARR-30,
+      rx:4, fill:"rgba(255,255,255,.14)"}));
+    svg.appendChild(n("path",{d:cuerpo, fill:"none",
+      stroke:"rgba(237,232,255,.35)","stroke-width":"2"}));
+    svg.appendChild(n("ellipse",{cx:CX,cy:ARR,rx:RX,ry:RY,fill:"none",
       stroke:"rgba(237,232,255,.5)","stroke-width":"2"}));
-    svg.appendChild(n("ellipse",{cx:70,cy:ARR,rx:RX-6,ry:RY-4,fill:"none",
+    svg.appendChild(n("ellipse",{cx:CX,cy:ARR,rx:RX-RX*0.15,ry:RY-RY*0.3,fill:"none",
       stroke:"rgba(237,232,255,.18)","stroke-width":"1"}));
 
-    // el número
-    var t = n("text",{x:70,y:nivel>110?86:ABA-24,"text-anchor":"middle",
-      "font-family":"Anton,Impact,sans-serif","font-size":"34",fill:"#FFFFFF",
-      style:"filter:drop-shadow(0 0 10px "+color+")"});
-    t.textContent = pct + "%";
-    svg.appendChild(t);
-
-    var sub = n("text",{x:70,y:nivel>110?104:ABA-6,"text-anchor":"middle",
-      "font-family":"'Chakra Petch',Inter,sans-serif","font-size":"11","font-weight":"700",
-      "font-style":"italic",fill:"rgba(237,232,255,.75)","letter-spacing":"1"});
-    sub.textContent = "disponible";
-    svg.appendChild(sub);
+    if(med.rotulosArriba){
+      var a = n("text",{x:CX,y:22,"text-anchor":"middle",
+        "font-family":"Anton,Impact,sans-serif","font-size":"22",fill:"#FFFFFF",
+        style:"filter:drop-shadow(0 0 8px "+color+")"});
+      a.textContent = grande;
+      svg.appendChild(a);
+      var c = n("text",{x:CX,y:34,"text-anchor":"middle",
+        "font-family":"'Chakra Petch',Inter,sans-serif","font-size":"9","font-weight":"700",
+        "font-style":"italic",fill:"rgba(237,232,255,.75)"});
+      c.textContent = chico;
+      svg.appendChild(c);
+    } else {
+      var alto = nivel > (ARR+ABA)/2;
+      var t = n("text",{x:CX,y:alto?ARR+56:ABA-30,"text-anchor":"middle",
+        "font-family":"Anton,Impact,sans-serif","font-size":"46",fill:"#FFFFFF",
+        style:"filter:drop-shadow(0 0 12px "+color+")"});
+      t.textContent = grande;
+      svg.appendChild(t);
+      var sub = n("text",{x:CX,y:alto?ARR+78:ABA-8,"text-anchor":"middle",
+        "font-family":"'Chakra Petch',Inter,sans-serif","font-size":"13","font-weight":"700",
+        "font-style":"italic",fill:"rgba(237,232,255,.75)","letter-spacing":"1"});
+      sub.textContent = chico;
+      svg.appendChild(sub);
+    }
 
     caja.appendChild(svg);
+  }
+
+  function pintarTanques(r){
+    var caja = $("tanque").parentNode;
+    if(r.entra <= 0){ caja.style.display="none"; }
+    else {
+      caja.style.display="flex";
+      var frac = r.queda / r.entra;
+      var f = Math.max(0, Math.min(1, frac));
+      cilindro($("tanque"), f, tonoNivel(f), Math.round(f*100)+"%", "disponible");
+    }
+
+    var h = new Date();
+    var total  = new Date(h.getFullYear(), h.getMonth()+1, 0).getDate();
+    var faltan = Math.max(0, total - h.getDate());
+    var fd = faltan/total;
+    cilindro($("tanqueDias"), fd, "#FF2E88", String(faltan), faltan===1 ? "día" : "días",
+             { W:54, RX:19, RY:7, ARR:48, ABA:200, ALTO:230, rotulosArriba:true });
   }
 
   function pintarBalance(){
@@ -1099,23 +1031,10 @@
       $("dobleIngresos").className = "doble solo";
     }
 
-    $("totalEntra").textContent    = fmt(r.entra);
-    $("totalFijoBal").textContent  = fmt(r.fijo);
-    $("totalVarBal").textContent   = fmt(r.vari);
-    $("totalSale").textContent     = fmt(r.sale);
-
-    var pies=$("piesBal");
-    if(r.entra>0){
-      var usado = Math.min(100, Math.max(0,(r.sale/r.entra)*100));
-      pies.style.display="flex";
-      $("piePorcGasto").textContent = "GASTADO "+Math.round(usado)+"%";
-      $("piePorcLibre").textContent = "LIBRE "+Math.max(0,100-Math.round(usado))+"%";
-    } else { pies.style.display="none"; }
-
     $("totalFijos").textContent  = fmt(r.fijo);
     $("totalExtras").textContent = fmt(r.vari);
 
-    pintarTanque(r);
+    pintarTanques(r);
 
     var caja=$("desglose"); limpiar(caja);
     if(r.sale<=0){
@@ -1324,7 +1243,7 @@
     $("pestanas").style.display="flex";
     pintarAjustes();
     pintarIngresos(); refrescarIngresos();
-    pintarFijos(); pintarExtras(); pintarBalance(); pintarDias();
+    pintarFijos(); pintarExtras(); pintarBalance();
     programar();
     $("huella").textContent = "Sincronizado con tu base: los mismos datos en todos tus dispositivos.";
   }
