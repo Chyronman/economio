@@ -485,7 +485,7 @@
   <span class="velo"></span>
 </div>
 
-<div class="estado" id="estadoRed">SIN CONEXIÓN · los cambios no se están guardando</div>
+<div class="estado" id="estadoRed">SIN CONEXIÓN · el último cambio no se pudo guardar</div>
 
 
 <div class="puerta" id="pantallaDiag" style="display:none">
@@ -746,6 +746,16 @@
   function ver(id,si){ $(id).style.display = si ? (id.indexOf("pantalla")===0 ? "flex" : "block") : "none"; }
   function red(ok){ $("estadoRed").style.display = ok ? "none" : "block"; }
 
+  var enVivo = false;
+  function pintarHuella(){
+    var h = $("huella");
+    if(!h) return;
+    h.textContent = enVivo
+      ? "Guardado en tu base. Sincronización en vivo activa."
+      : "Guardado en tu base. La sincronización en vivo no está disponible: los cambios de otro dispositivo aparecen al recargar.";
+    h.style.color = enVivo ? "" : "var(--tenue)";
+  }
+
   /* ================= SUPABASE ================= */
 
   function arrancarCliente(cfg){
@@ -901,6 +911,8 @@
 
   function traducir(m){
     m = String(m||"");
+    if(/Failed to fetch|NetworkError|Load failed|ERR_|fetch failed/i.test(m))
+      return "No se llega al servidor. Puede que el proyecto de Supabase esté pausado: entrá a supabase.com y tocá Restore project. O revisá tu conexión.";
     if(/Invalid login/i.test(m)) return "Correo o contraseña incorrectos.";
     if(/already registered/i.test(m)) return "Ese correo ya tiene cuenta. Entrá en vez de crear.";
     if(/Email not confirmed/i.test(m)) return "Falta confirmar el correo.";
@@ -1012,7 +1024,10 @@
             for(var k in datos) d[k] = datos[k];
             pintarIngresos(); pintarFijos(); pintarExtras(); pintarAjustes(); pintarBalance();
           })
-      .subscribe(function(estado){ red(estado === "SUBSCRIBED"); });
+      .subscribe(function(estado){
+        enVivo = (estado === "SUBSCRIBED");
+        pintarHuella();
+      });
   }
 
   window.addEventListener("online",  function(){ if(hogarId) cargarTodo(); });
@@ -1388,7 +1403,7 @@
     pintarFijos(); pintarExtras(); pintarBalance();
     ajustarTitulos();
     programar();
-    $("huella").textContent = "Sincronizado con tu base: los mismos datos en todos tus dispositivos.";
+    pintarHuella();
   }
 
 
@@ -1424,7 +1439,7 @@
     if(code === "PGRST301" || /JWT|not authenticated/i.test(msg))
       return "Falta iniciar sesión. Creá tu cuenta primero.";
     if(/Failed to fetch|NetworkError|load failed/i.test(msg))
-      return "No se llega al servidor. Revisá la URL del proyecto y que tengas internet.";
+      return "No se llega al servidor. Lo más probable: el proyecto de Supabase está pausado (entrá a supabase.com y tocá Restore project). Si no, revisá la URL y tu conexión.";
     if(/Invalid API key|apikey/i.test(msg))
       return "La clave anon está mal pegada. Copiala de nuevo desde Project Settings → API Keys.";
     return msg;
