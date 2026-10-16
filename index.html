@@ -387,7 +387,7 @@
   @keyframes entraCerdo{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
   .chancho{
     display:block;height:auto;
-    width:min(300vw, 1100px);
+    width:min(138vw, 1100px);
     max-width:none;
     margin-left:50%;
     transform:translateX(-50%);
@@ -399,7 +399,7 @@
     font-family:Anton,Impact,sans-serif;font-size:31px;line-height:1;color:#FFFFFF;
     text-align:center;margin-top:2px;position:relative;z-index:2;
   }
-  .tanques{position:relative;display:block;margin:10px 0 8px;overflow:visible}
+  .tanques{position:relative;display:block;margin:10px 0 8px;overflow:visible;min-height:430px}
   .tanque{width:100%;display:block;overflow:visible}
 
   /* barra plana de los días, al costado */
@@ -418,7 +418,6 @@
     box-shadow:0 0 16px rgba(255,46,136,.85), 0 -2px 10px rgba(255,116,190,.7);}
   .regla .tubo i::after{content:"";position:absolute;left:0;right:0;top:0;height:2px;
     background:rgba(255,255,255,.75);box-shadow:0 0 8px #fff}
-  .tanque svg{width:100%;max-width:170px;display:block}
   .barra{height:16px;background:var(--capa);border:1px solid var(--reja);position:relative;overflow:hidden;margin-top:26px}
   .barra i{position:absolute;top:0;bottom:0;left:0;width:0;background:linear-gradient(90deg,var(--magenta),var(--violeta) 60%,var(--cian));box-shadow:0 0 16px rgba(162,75,255,.6);transition:width .46s cubic-bezier(.2,.8,.2,1)}
   .barra.excedido i{background:linear-gradient(90deg,var(--rojo),var(--magenta))}
@@ -513,6 +512,24 @@
   </div>
 </div>
 
+
+<!-- ============ CONTRASEÑA NUEVA ============ -->
+<div class="puerta" id="pantallaClaveNueva" style="display:none">
+  <div class="cerrojo">
+    <h2>Contraseña nueva</h2>
+    <p class="pie">Entraste desde el enlace del correo. Elegí una contraseña nueva para tu cuenta.</p>
+    <label for="claveNueva">CONTRASEÑA NUEVA</label>
+    <input class="campo" id="claveNueva" type="password" autocomplete="new-password" />
+    <label for="claveNueva2">REPETIR</label>
+    <input class="campo" id="claveNueva2" type="password" autocomplete="new-password" />
+    <p class="error" id="errorClave"></p>
+    <button class="entrar" id="guardarClave">Guardar contraseña</button>
+    <div style="margin-top:20px">
+      <button class="tenue" id="cancelarClave">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ============ 2. CUENTA ============ -->
 <div class="puerta" id="pantallaAuth" style="display:none">
   <div class="cerrojo">
@@ -538,6 +555,7 @@
     <button class="entrar" id="botonAuth">Entrar</button>
     <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
       <button class="tenue" id="cambiarModo">Todavía no tengo cuenta</button>
+      <button class="tenue" id="olvideClave">Olvidé mi contraseña</button>
       <button class="tenue" id="diagDesdeAuth">Probar la conexión</button>
       <button class="tenue" id="olvidoNube" style="margin-left:auto">Cambiar de base</button>
     </div>
@@ -741,11 +759,41 @@
     try { cfg = JSON.parse(localStorage.getItem(CFG_CLAVE)); } catch(e){}
     if(!cfg || !cfg.url || !cfg.key){ ver("pantallaConfig",true); return; }
     arrancarCliente(cfg);
+
+    /* ¿volvemos del enlace del correo? */
+    var hash = window.location.hash || "";
+    var recuperando = hash.indexOf("type=recovery") >= 0;
+
+    if(hash.indexOf("error") >= 0){
+      ver("pantallaAuth",true);
+      $("errorAuth").textContent = /expired/i.test(hash)
+        ? "Ese enlace venció. Pedí uno nuevo."
+        : "El enlace del correo no sirvió. Pedí uno nuevo.";
+      limpiarHash();
+      return;
+    }
+
+    sb.auth.onAuthStateChange(function(evento){
+      if(evento === "PASSWORD_RECOVERY") pedirClaveNueva();
+    });
+
     sb.auth.getSession().then(function(r){
       sesion = r.data.session;
+      if(recuperando && sesion){ pedirClaveNueva(); return; }
       if(!sesion){ ver("pantallaAuth",true); return; }
       buscarHogar();
     });
+  }
+
+  function limpiarHash(){
+    try { history.replaceState(null, "", window.location.pathname + window.location.search); } catch(e){}
+  }
+
+  function pedirClaveNueva(){
+    ver("pantallaConfig",false); ver("pantallaAuth",false); ver("pantallaHogar",false);
+    ver("pantallaClaveNueva",true);
+    var portada = document.getElementById("portada");
+    if(portada) portada.style.display = "none";
   }
 
   $("guardarCfg").addEventListener("click", function(){
@@ -766,6 +814,59 @@
     $("cambiarModo").textContent = modoRegistro ? "Ya tengo cuenta" : "Todavía no tengo cuenta";
     $("pass").setAttribute("autocomplete", modoRegistro ? "new-password" : "current-password");
     $("errorAuth").textContent = "";
+  });
+
+  /* ---------- recuperar la contraseña ---------- */
+  $("olvideClave").addEventListener("click", function(){
+    var mail = $("mail").value.trim();
+    $("errorAuth").textContent = "";
+    if(!mail){
+      $("mail").focus();
+      $("errorAuth").textContent = "Escribí tu correo arriba y volvé a tocar acá.";
+      return;
+    }
+    var boton = $("olvideClave");
+    boton.textContent = "Enviando…";
+    sb.auth.resetPasswordForEmail(mail, {
+      redirectTo: window.location.origin + window.location.pathname
+    }).then(function(r){
+      boton.textContent = "Olvidé mi contraseña";
+      if(r.error) throw r.error;
+      $("errorAuth").style.color = "var(--neon)";
+      $("errorAuth").textContent = "Te mandamos un enlace a " + mail + ". Abrilo desde este mismo dispositivo.";
+    }).catch(function(e){
+      boton.textContent = "Olvidé mi contraseña";
+      $("errorAuth").style.color = "";
+      $("errorAuth").textContent = traducir(e.message);
+    });
+  });
+
+  $("guardarClave").addEventListener("click", function(){
+    var a = $("claveNueva").value, b = $("claveNueva2").value;
+    $("errorClave").textContent = "";
+    if(a.length < 8) return ($("errorClave").textContent = "Necesita al menos 8 caracteres.");
+    if(a !== b)      return ($("errorClave").textContent = "Las dos no coinciden.");
+    var boton = $("guardarClave");
+    boton.textContent = "Guardando…";
+    sb.auth.updateUser({ password:a }).then(function(r){
+      if(r.error) throw r.error;
+      limpiarHash();
+      ver("pantallaClaveNueva",false);
+      sb.auth.getSession().then(function(x){
+        sesion = x.data.session;
+        if(sesion) buscarHogar();
+        else { ver("pantallaAuth",true); $("errorAuth").textContent = "Listo. Entrá con tu contraseña nueva."; }
+      });
+    }).catch(function(e){
+      boton.textContent = "Guardar contraseña";
+      $("errorClave").textContent = traducir(e.message);
+    });
+  });
+
+  $("cancelarClave").addEventListener("click", function(){ limpiarHash(); location.reload(); });
+
+  ["claveNueva","claveNueva2"].forEach(function(id){
+    $(id).addEventListener("keydown", function(e){ if(e.key==="Enter") $("guardarClave").click(); });
   });
 
   $("olvidoNube").addEventListener("click", function(){
@@ -803,7 +904,11 @@
     if(/Invalid login/i.test(m)) return "Correo o contraseña incorrectos.";
     if(/already registered/i.test(m)) return "Ese correo ya tiene cuenta. Entrá en vez de crear.";
     if(/Email not confirmed/i.test(m)) return "Falta confirmar el correo.";
-    if(/rate limit/i.test(m)) return "Demasiados intentos. Esperá un momento.";
+    if(/rate limit|too many/i.test(m)) return "Demasiados intentos. Esperá unos minutos.";
+    if(/same.*password|should be different/i.test(m)) return "Esa es la contraseña que ya tenías. Elegí otra.";
+    if(/weak|at least/i.test(m)) return "Contraseña muy corta: usá al menos 8 caracteres.";
+    if(/session|not authenticated|expired/i.test(m)) return "El enlace venció. Pedí uno nuevo desde la pantalla de ingreso.";
+    if(/User not found|Unable to validate/i.test(m)) return "No hay ninguna cuenta con ese correo.";
     return m;
   }
 
@@ -1275,6 +1380,7 @@
 
   function mostrarApp(){
     ver("pantallaConfig",false); ver("pantallaAuth",false); ver("pantallaHogar",false);
+    ver("pantallaClaveNueva",false);
     $("appHoja").style.display="block";
     $("pestanas").style.display="flex";
     pintarAjustes();
